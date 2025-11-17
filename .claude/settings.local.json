@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(dir /S /B)",
+      "Bash(dir:*)",
+      "Bash(del databaseapp.db)",
+      "Bash(php database/seed_organization_departments.php:*)",
+      "Bash(php -r:*)",
+      "Bash(php test_departments.php:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

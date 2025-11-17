@@ -1,0 +1,42 @@
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# SQLite Database
+database/
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+error_log
+
+# Cache
+cache/
+tmp/
+temp/
+
+# Vendor directories (if using Composer in future)
+vendor/
+
+# OS files
+Thumbs.db
+desktop.ini
+
+# Uploaded files
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Session files
+sessions/
