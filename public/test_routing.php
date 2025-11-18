@@ -41,7 +41,7 @@ echo "PHP Version: " . PHP_VERSION . "\n";
 $files_to_check = [
     'organizations-facilities.php',
     'organizations-facilities-branches.php',
-    'facility-department-form.php',
+    'facility-team-form.php',
     '.htaccess'
 ];
 
@@ -92,7 +92,7 @@ if (function_exists('apache_get_modules')) {
             <li><a href="/organizations/facilities">✦ /organizations/facilities</a> (Should show Facility Departments)</li>
             <li><a href="/organizations-facilities.php">✦ /organizations-facilities.php</a> (Direct file access)</li>
             <li><a href="/organizations/facilities/branches">✦ /organizations/facilities/branches</a> (Should show Branches)</li>
-            <li><a href="/facility-department-form.php">✦ /facility-department-form.php</a> (Direct form access)</li>
+            <li><a href="/facility-team-form.php">✦ /facility-team-form.php</a> (Direct form access)</li>
             <li><a href="/organizations.php">✦ /organizations.php</a> (Organizations page)</li>
         </ul>
     </div>

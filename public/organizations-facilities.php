@@ -3,7 +3,7 @@ require_once __DIR__ . '/../src/includes/autoload.php';
 
 use App\Classes\Auth;
 use App\Classes\OrganizationRepository;
-use App\Classes\FacilityDepartmentRepository;
+use App\Classes\FacilityTeamRepository;
 
 $auth = new Auth();
 
@@ -17,27 +17,27 @@ $auth->requireAuth();
 
 $user = $auth->getCurrentUser();
 $orgRepo = new OrganizationRepository();
-$facilityDeptRepo = new FacilityDepartmentRepository();
+$facilityTeamRepo = new FacilityTeamRepository();
 
 // Get organizations for current user
 $organizations = $orgRepo->findAllByUser($user->getId());
 
-// Get facility departments
-$facilityDepartments = $facilityDeptRepo->findAll();
-$deletedDepartments = [];
+// Get facility teams
+$facilityTeams = $facilityTeamRepo->findAll();
+$deletedTeams = [];
 
-// Only Super Admin can view deleted departments
-if ($facilityDeptRepo->isSuperAdmin($user->getEmail())) {
+// Only Super Admin can view deleted teams
+if ($facilityTeamRepo->isSuperAdmin($user->getEmail())) {
     try {
-        $deletedDepartments = $facilityDeptRepo->findDeleted($user->getEmail());
+        $deletedTeams = $facilityTeamRepo->findDeleted($user->getEmail());
     } catch (Exception $e) {
         // Silently handle if not authorized
     }
 }
 
-$totalCount = $facilityDeptRepo->count(false);
+$totalCount = $facilityTeamRepo->count(false);
 
-$pageTitle = 'Facility Departments';
+$pageTitle = 'Facility Teams';
 include __DIR__ . '/../views/header.php';
 ?>
 
@@ -65,8 +65,8 @@ include __DIR__ . '/../views/header.php';
     </div>
 
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
-        <h1>Facility Departments</h1>
-        <a href="/facility-department-form.php" class="btn btn-primary">+ New Facility Department</a>
+        <h1>Facility Teams</h1>
+        <a href="/facility-team-form.php" class="btn btn-primary">+ New Facility Team</a>
     </div>
 
     <!-- Quick Access Links -->
@@ -78,7 +78,7 @@ include __DIR__ . '/../views/header.php';
                 Branches
             </a>
             <a href="/organizations/facilities" class="btn btn-primary" style="padding: 1rem; text-align: center;">
-                Departments
+                Teams
             </a>
             <button class="btn btn-secondary" style="padding: 1rem; opacity: 0.6;" disabled title="Coming soon">
                 Buildings
@@ -111,22 +111,22 @@ include __DIR__ . '/../views/header.php';
         </div>
     </div>
 
-    <!-- Active Facility Departments -->
+    <!-- Active Facility Teams -->
     <div class="card">
-        <h2 class="card-title">Facility Departments (<?php echo count($facilityDepartments); ?>)</h2>
+        <h2 class="card-title">Facility Teams (<?php echo count($facilityTeams); ?>)</h2>
 
-        <?php if (empty($facilityDepartments)): ?>
+        <?php if (empty($facilityTeams)): ?>
             <!-- Empty State -->
             <div style="text-align: center; padding: 3rem 1rem;">
                 <div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.3;">&#128194;</div>
-                <h3 style="margin-bottom: 0.5rem;">No Facility Departments Yet</h3>
-                <p class="text-muted" style="margin-bottom: 1.5rem;">Get started by creating your first facility department</p>
-                <a href="/facility-department-form.php" class="btn btn-primary">Create Your First Facility Department</a>
+                <h3 style="margin-bottom: 0.5rem;">No Facility Teams Yet</h3>
+                <p class="text-muted" style="margin-bottom: 1.5rem;">Get started by creating your first facility team</p>
+                <a href="/facility-team-form.php" class="btn btn-primary">Create Your First Facility Team</a>
             </div>
         <?php else: ?>
             <!-- Desktop Table View -->
             <div class="desktop-view" style="overflow-x: auto;">
-                <table id="departments-table" style="width: 100%; border-collapse: collapse;">
+                <table id="teams-table" style="width: 100%; border-collapse: collapse;">
                     <thead>
                         <tr style="border-bottom: 2px solid var(--border-color); text-align: left;">
                             <th style="padding: 1rem;">Name</th>
@@ -139,7 +139,7 @@ include __DIR__ . '/../views/header.php';
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($facilityDepartments as $dept): ?>
+                        <?php foreach ($facilityTeams as $dept): ?>
                             <tr style="border-bottom: 1px solid var(--border-color);" data-status="<?php echo $dept->getIsActive() ? 'active' : 'inactive'; ?>">
                                 <td style="padding: 1rem;">
                                     <strong><?php echo htmlspecialchars($dept->getName()); ?></strong>
@@ -177,9 +177,9 @@ include __DIR__ . '/../views/header.php';
                                     <?php echo date('M j, Y', strtotime($dept->getCreatedAt())); ?>
                                 </td>
                                 <td style="padding: 1rem; white-space: nowrap;">
-                                    <a href="/facility-department-form.php?id=<?php echo $dept->getId(); ?>" class="btn btn-secondary" style="padding: 0.5rem 1rem; margin-right: 0.5rem;">Edit</a>
-                                    <?php if ($facilityDeptRepo->isSuperAdmin($user->getEmail())): ?>
-                                        <a href="/facility-department-delete.php?id=<?php echo $dept->getId(); ?>" class="btn btn-danger" style="padding: 0.5rem 1rem;" onclick="return confirm('Are you sure you want to delete this facility department?');">Delete</a>
+                                    <a href="/facility-team-form.php?id=<?php echo $dept->getId(); ?>" class="btn btn-secondary" style="padding: 0.5rem 1rem; margin-right: 0.5rem;">Edit</a>
+                                    <?php if ($facilityTeamRepo->isSuperAdmin($user->getEmail())): ?>
+                                        <a href="/facility-team-delete.php?id=<?php echo $dept->getId(); ?>" class="btn btn-danger" style="padding: 0.5rem 1rem;" onclick="return confirm('Are you sure you want to delete this facility team?');">Delete</a>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -190,7 +190,7 @@ include __DIR__ . '/../views/header.php';
 
             <!-- Mobile Card View -->
             <div class="mobile-view" style="display: none;">
-                <?php foreach ($facilityDepartments as $dept): ?>
+                <?php foreach ($facilityTeams as $dept): ?>
                     <div class="card" style="margin-bottom: 1rem; padding: 1rem;" data-status="<?php echo $dept->getIsActive() ? 'active' : 'inactive'; ?>">
                         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
                             <strong style="font-size: 1.1rem;"><?php echo htmlspecialchars($dept->getName()); ?></strong>
@@ -214,9 +214,9 @@ include __DIR__ . '/../views/header.php';
                             Created: <?php echo date('M j, Y', strtotime($dept->getCreatedAt())); ?>
                         </div>
                         <div style="display: flex; gap: 0.5rem;">
-                            <a href="/facility-department-form.php?id=<?php echo $dept->getId(); ?>" class="btn btn-secondary" style="flex: 1; text-align: center;">Edit</a>
-                            <?php if ($facilityDeptRepo->isSuperAdmin($user->getEmail())): ?>
-                                <a href="/facility-department-delete.php?id=<?php echo $dept->getId(); ?>" class="btn btn-danger" style="flex: 1; text-align: center;" onclick="return confirm('Are you sure you want to delete this facility department?');">Delete</a>
+                            <a href="/facility-team-form.php?id=<?php echo $dept->getId(); ?>" class="btn btn-secondary" style="flex: 1; text-align: center;">Edit</a>
+                            <?php if ($facilityTeamRepo->isSuperAdmin($user->getEmail())): ?>
+                                <a href="/facility-team-delete.php?id=<?php echo $dept->getId(); ?>" class="btn btn-danger" style="flex: 1; text-align: center;" onclick="return confirm('Are you sure you want to delete this facility team?');">Delete</a>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -225,11 +225,11 @@ include __DIR__ . '/../views/header.php';
         <?php endif; ?>
     </div>
 
-    <!-- Deleted Facility Departments (Trash) - Only for Super Admin -->
-    <?php if (!empty($deletedDepartments)): ?>
+    <!-- Deleted Facility Teams (Trash) - Only for Super Admin -->
+    <?php if (!empty($deletedTeams)): ?>
         <div class="card">
-            <h2 class="card-title">Trash (<?php echo count($deletedDepartments); ?>)</h2>
-            <p class="text-muted text-small">Deleted facility departments can be restored or permanently deleted.</p>
+            <h2 class="card-title">Trash (<?php echo count($deletedTeams); ?>)</h2>
+            <p class="text-muted text-small">Deleted facility teams can be restored or permanently deleted.</p>
 
             <div style="overflow-x: auto;">
                 <table style="width: 100%; border-collapse: collapse;">
@@ -242,7 +242,7 @@ include __DIR__ . '/../views/header.php';
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($deletedDepartments as $dept): ?>
+                        <?php foreach ($deletedTeams as $dept): ?>
                             <tr style="border-bottom: 1px solid var(--border-color); opacity: 0.6;">
                                 <td style="padding: 1rem;">
                                     <strong><?php echo htmlspecialchars($dept->getName()); ?></strong>
@@ -256,8 +256,8 @@ include __DIR__ . '/../views/header.php';
                                     <?php echo date('M j, Y', strtotime($dept->getDeletedAt())); ?>
                                 </td>
                                 <td style="padding: 1rem; white-space: nowrap;">
-                                    <a href="/facility-department-restore.php?id=<?php echo $dept->getId(); ?>" class="btn btn-secondary" style="padding: 0.5rem 1rem; margin-right: 0.5rem;">Restore</a>
-                                    <a href="/facility-department-delete.php?id=<?php echo $dept->getId(); ?>&permanent=1" class="btn btn-danger" style="padding: 0.5rem 1rem;" onclick="return confirm('Permanently delete this facility department? This cannot be undone!');">Delete Forever</a>
+                                    <a href="/facility-team-restore.php?id=<?php echo $dept->getId(); ?>" class="btn btn-secondary" style="padding: 0.5rem 1rem; margin-right: 0.5rem;">Restore</a>
+                                    <a href="/facility-team-delete.php?id=<?php echo $dept->getId(); ?>&permanent=1" class="btn btn-danger" style="padding: 0.5rem 1rem;" onclick="return confirm('Permanently delete this facility team? This cannot be undone!');">Delete Forever</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -273,7 +273,7 @@ include __DIR__ . '/../views/header.php';
 function filterTable() {
     const searchInput = document.getElementById('search-input').value.toLowerCase();
     const statusFilter = document.getElementById('status-filter').value;
-    const table = document.getElementById('departments-table');
+    const table = document.getElementById('teams-table');
 
     if (table) {
         const rows = table.getElementsByTagName('tr');

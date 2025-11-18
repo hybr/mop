@@ -7,7 +7,7 @@
  */
 
 // Application Settings
-define('APP_NAME', 'MyApp');
+define('APP_NAME', 'V4L');
 define('APP_ENV', 'development'); // development, staging, production
 define('APP_DEBUG', true); // Set to false in production
 

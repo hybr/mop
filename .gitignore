@@ -11,12 +11,6 @@
 .env.local
 .env.production
 
-# SQLite Database
-database/
-*.db
-*.sqlite
-*.sqlite3
-
 # Logs
 *.log
 logs/

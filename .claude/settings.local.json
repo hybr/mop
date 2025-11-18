@@ -13,7 +13,10 @@
       "Bash(del:*)",
       "Bash(php database/seed_facility_departments.php:*)",
       "Bash(php -S localhost:8000 -t public public/router.php:*)",
-      "Bash(php database/migrate_organization_branches.php:*)"
+      "Bash(php database/migrate_organization_branches.php:*)",
+      "Bash(sqlite3:*)",
+      "Bash(move:*)",
+      "Bash(mv:*)"
     ],
     "deny": [],
     "ask": []

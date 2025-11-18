@@ -2,29 +2,29 @@
 require_once __DIR__ . '/../src/includes/autoload.php';
 
 use App\Classes\Auth;
-use App\Classes\FacilityDepartment;
-use App\Classes\FacilityDepartmentRepository;
+use App\Classes\FacilityTeam;
+use App\Classes\FacilityTeamRepository;
 use App\Classes\OrganizationRepository;
 
 $auth = new Auth();
 $auth->requireAuth();
 
 $user = $auth->getCurrentUser();
-$facilityDeptRepo = new FacilityDepartmentRepository();
+$facilityTeamRepo = new FacilityTeamRepository();
 $orgRepo = new OrganizationRepository();
 
 $errors = [];
 $success = false;
 $isEdit = false;
-$department = new FacilityDepartment();
+$team = new FacilityTeam();
 
-// Check if editing existing department
+// Check if editing existing team
 if (isset($_GET['id'])) {
     $isEdit = true;
-    $department = $facilityDeptRepo->findById($_GET['id']);
+    $team = $facilityTeamRepo->findById($_GET['id']);
 
-    if (!$department) {
-        header('Location: /organizations/facilities?error=Department not found');
+    if (!$team) {
+        header('Location: /organizations/facilities?error=Team not found');
         exit;
     }
 }
@@ -32,27 +32,28 @@ if (isset($_GET['id'])) {
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        // Populate department from form data
-        $department->setName($_POST['name'] ?? '');
-        $department->setCode($_POST['code'] ?? '');
-        $department->setDescription($_POST['description'] ?? '');
-        $department->setOrganizationId($_POST['organization_id'] ?? null);
-        $department->setParentDepartmentId($_POST['parent_department_id'] ?? null);
-        $department->setIsActive(isset($_POST['is_active']) ? 1 : 0);
-        $department->setSortOrder($_POST['sort_order'] ?? 0);
+        // Populate team from form data
+        $team->setName($_POST['name'] ?? '');
+        $team->setCode($_POST['code'] ?? '');
+        $team->setDescription($_POST['description'] ?? '');
+        $team->setFacilityId($_POST['facility_id'] ?? null);
+        $team->setOrganizationId($_POST['organization_id'] ?? null);
+        $team->setParentTeamId($_POST['parent_team_id'] ?? null);
+        $team->setIsActive(isset($_POST['is_active']) ? 1 : 0);
+        $team->setSortOrder($_POST['sort_order'] ?? 0);
 
         // Validate
-        $errors = $department->validate();
+        $errors = $team->validate();
 
         if (empty($errors)) {
             if ($isEdit) {
                 // Update existing
-                $facilityDeptRepo->update($department, $user->getId(), $user->getEmail());
-                $success = "Facility department updated successfully!";
+                $facilityTeamRepo->update($team, $user->getId(), $user->getEmail());
+                $success = "Facility team updated successfully!";
             } else {
                 // Create new
-                $department = $facilityDeptRepo->create($department, $user->getId(), $user->getEmail());
-                $success = "Facility department created successfully!";
+                $team = $facilityTeamRepo->create($team, $user->getId(), $user->getEmail());
+                $success = "Facility team created successfully!";
                 $isEdit = true; // Switch to edit mode after creation
             }
         }
@@ -64,15 +65,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Get organizations for dropdown
 $organizations = $orgRepo->findAllByUser($user->getId());
 
-// Get facility departments for parent dropdown (exclude current if editing)
-$allDepartments = $facilityDeptRepo->findAll(200);
+// Get facility teams for parent dropdown (exclude current if editing)
+$allTeams = $facilityTeamRepo->findAll(200);
 if ($isEdit) {
-    $allDepartments = array_filter($allDepartments, function($dept) use ($department) {
-        return $dept->getId() !== $department->getId();
+    $allTeams = array_filter($allTeams, function($dept) use ($team) {
+        return $dept->getId() !== $team->getId();
     });
 }
 
-$pageTitle = $isEdit ? 'Edit Facility Department' : 'New Facility Department';
+$pageTitle = $isEdit ? 'Edit Facility Team' : 'New Facility Team';
 include __DIR__ . '/../views/header.php';
 ?>
 
@@ -81,7 +82,7 @@ include __DIR__ . '/../views/header.php';
     <div style="margin-bottom: 1rem;">
         <a href="/organizations.php" class="link">Organizations</a>
         <span style="color: var(--text-light);"> / </span>
-        <a href="/organizations/facilities" class="link">Facility Departments</a>
+        <a href="/organizations/facilities" class="link">Facility Teams</a>
         <span style="color: var(--text-light);"> / </span>
         <span><?php echo $isEdit ? 'Edit' : 'New'; ?></span>
     </div>
@@ -119,30 +120,30 @@ include __DIR__ . '/../views/header.php';
                 <!-- Name Field -->
                 <div style="margin-bottom: 1.5rem;">
                     <label for="name" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                        Department Name <span style="color: #f44336;">*</span>
+                        Team Name <span style="color: #f44336;">*</span>
                     </label>
                     <input
                         type="text"
                         id="name"
                         name="name"
-                        value="<?php echo htmlspecialchars($department->getName() ?? ''); ?>"
+                        value="<?php echo htmlspecialchars($team->getName() ?? ''); ?>"
                         required
                         style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"
                         placeholder="e.g., Operations, Maintenance, Security"
                     >
-                    <small class="text-muted">The name of this facility department</small>
+                    <small class="text-muted">The name of this facility team</small>
                 </div>
 
                 <!-- Code Field -->
                 <div style="margin-bottom: 1.5rem;">
                     <label for="code" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                        Department Code <span style="color: #f44336;">*</span>
+                        Team Code <span style="color: #f44336;">*</span>
                     </label>
                     <input
                         type="text"
                         id="code"
                         name="code"
-                        value="<?php echo htmlspecialchars($department->getCode() ?? ''); ?>"
+                        value="<?php echo htmlspecialchars($team->getCode() ?? ''); ?>"
                         required
                         style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem; text-transform: uppercase;"
                         placeholder="e.g., OPS, MAINT, SEC"
@@ -163,9 +164,9 @@ include __DIR__ . '/../views/header.php';
                         name="description"
                         rows="4"
                         style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem; font-family: inherit;"
-                        placeholder="Brief description of this department's responsibilities..."
-                    ><?php echo htmlspecialchars($department->getDescription() ?? ''); ?></textarea>
-                    <small class="text-muted">Optional description of the department</small>
+                        placeholder="Brief description of this team's responsibilities..."
+                    ><?php echo htmlspecialchars($team->getDescription() ?? ''); ?></textarea>
+                    <small class="text-muted">Optional description of the team</small>
                 </div>
             </div>
 
@@ -188,33 +189,33 @@ include __DIR__ . '/../views/header.php';
                         <option value="">Global (All Organizations)</option>
                         <?php foreach ($organizations as $org): ?>
                             <option value="<?php echo $org->getId(); ?>"
-                                <?php echo ($department->getOrganizationId() === $org->getId()) ? 'selected' : ''; ?>>
+                                <?php echo ($team->getOrganizationId() === $org->getId()) ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($org->getName()); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
-                    <small class="text-muted">Leave as Global if this department applies to all organizations</small>
+                    <small class="text-muted">Leave as Global if this team applies to all organizations</small>
                 </div>
 
-                <!-- Parent Department Field -->
+                <!-- Parent Team Field -->
                 <div style="margin-bottom: 1.5rem;">
-                    <label for="parent_department_id" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                        Parent Department
+                    <label for="parent_team_id" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
+                        Parent Team
                     </label>
                     <select
-                        id="parent_department_id"
-                        name="parent_department_id"
+                        id="parent_team_id"
+                        name="parent_team_id"
                         style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"
                     >
                         <option value="">None (Top Level)</option>
-                        <?php foreach ($allDepartments as $dept): ?>
+                        <?php foreach ($allTeams as $dept): ?>
                             <option value="<?php echo $dept->getId(); ?>"
-                                <?php echo ($department->getParentDepartmentId() === $dept->getId()) ? 'selected' : ''; ?>>
+                                <?php echo ($team->getParentTeamId() === $dept->getId()) ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($dept->getLabel()); ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
-                    <small class="text-muted">Optional: Select a parent department for hierarchical organization</small>
+                    <small class="text-muted">Optional: Select a parent team for hierarchical organization</small>
                 </div>
 
                 <!-- Sort Order Field -->
@@ -226,7 +227,7 @@ include __DIR__ . '/../views/header.php';
                         type="number"
                         id="sort_order"
                         name="sort_order"
-                        value="<?php echo $department->getSortOrder() ?? 0; ?>"
+                        value="<?php echo $team->getSortOrder() ?? 0; ?>"
                         min="0"
                         style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"
                         placeholder="0"
@@ -248,13 +249,13 @@ include __DIR__ . '/../views/header.php';
                             type="checkbox"
                             id="is_active"
                             name="is_active"
-                            <?php echo ($department->getIsActive() || !$isEdit) ? 'checked' : ''; ?>
+                            <?php echo ($team->getIsActive() || !$isEdit) ? 'checked' : ''; ?>
                             style="margin-right: 0.5rem; width: 18px; height: 18px; cursor: pointer;"
                         >
-                        <span style="font-weight: 500;">Active Department</span>
+                        <span style="font-weight: 500;">Active Team</span>
                     </label>
                     <small class="text-muted" style="margin-left: 1.5rem; display: block; margin-top: 0.25rem;">
-                        Inactive departments are hidden from dropdown selections
+                        Inactive teams are hidden from dropdown selections
                     </small>
                 </div>
             </div>
@@ -262,13 +263,13 @@ include __DIR__ . '/../views/header.php';
             <!-- Form Actions -->
             <div style="display: flex; gap: 1rem; flex-wrap: wrap; padding-top: 1.5rem; border-top: 2px solid var(--border-color);">
                 <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem;">
-                    <?php echo $isEdit ? 'Update Department' : 'Create Department'; ?>
+                    <?php echo $isEdit ? 'Update Team' : 'Create Team'; ?>
                 </button>
                 <a href="/organizations/facilities" class="btn btn-secondary" style="padding: 0.75rem 2rem; text-decoration: none;">
                     Cancel
                 </a>
                 <?php if ($isEdit): ?>
-                    <a href="/facility-department-form.php" class="btn btn-secondary" style="padding: 0.75rem 2rem; text-decoration: none; margin-left: auto;">
+                    <a href="/facility-team-form.php" class="btn btn-secondary" style="padding: 0.75rem 2rem; text-decoration: none; margin-left: auto;">
                         + Create New Instead
                     </a>
                 <?php endif; ?>
@@ -280,10 +281,10 @@ include __DIR__ . '/../views/header.php';
     <div class="card" style="margin-top: 2rem; background-color: var(--bg-light);">
         <h3 style="margin-bottom: 1rem;">&#128161; Tips</h3>
         <ul style="margin: 0; padding-left: 1.5rem; line-height: 1.8;">
-            <li><strong>Department Code:</strong> Use short, memorable codes like "OPS" for Operations or "MAINT" for Maintenance</li>
-            <li><strong>Organization:</strong> Leave as "Global" if this department type applies to all organizations</li>
-            <li><strong>Parent Department:</strong> Create hierarchical structures like "Facilities > Maintenance > HVAC"</li>
-            <li><strong>Sort Order:</strong> Use this to control the order departments appear in lists and dropdowns</li>
+            <li><strong>Team Code:</strong> Use short, memorable codes like "OPS" for Operations or "MAINT" for Maintenance</li>
+            <li><strong>Organization:</strong> Leave as "Global" if this team type applies to all organizations</li>
+            <li><strong>Parent Team:</strong> Create hierarchical structures like "Facilities > Maintenance > HVAC"</li>
+            <li><strong>Sort Order:</strong> Use this to control the order teams appear in lists and dropdowns</li>
         </ul>
     </div>
 </div>

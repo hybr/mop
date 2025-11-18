@@ -307,4 +307,86 @@ class OrganizationBranchRepository {
     public function isSuperAdmin($email) {
         return $email === 'sharma.yogesh.1234@gmail.com';
     }
+
+    /**
+     * Check if user can edit branch
+     * Per ENTITY_IMPLEMENTATION_SUMMARY: Super Admin or organization creator can edit
+     */
+    public function canEdit($branchId, $userId, $userEmail) {
+        // Super Admin can edit any branch
+        if ($this->isSuperAdmin($userEmail)) {
+            return true;
+        }
+
+        // Check if user owns the organization that owns this branch
+        $branch = $this->findById($branchId);
+        if (!$branch) {
+            return false;
+        }
+
+        $pdo = $this->db->getPdo();
+        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM organizations
+                               WHERE id = ? AND created_by = ? AND deleted_at IS NULL");
+        $stmt->execute([$branch->getOrganizationId(), $userId]);
+        $result = $stmt->fetch();
+
+        return ($result['count'] ?? 0) > 0;
+    }
+
+    /**
+     * Find branch by ID (public view)
+     * Returns only public fields - accessible to all users
+     */
+    public function findByIdPublic($id) {
+        $pdo = $this->db->getPdo();
+        $stmt = $pdo->prepare("SELECT * FROM {$this->tableName} WHERE id = ? AND deleted_at IS NULL AND is_active = 1");
+        $stmt->execute([$id]);
+        $data = $stmt->fetch();
+
+        if ($data) {
+            $branch = new OrganizationBranch($data);
+            return $branch;
+        }
+
+        return null;
+    }
+
+    /**
+     * Find all active branches (public view)
+     * Returns only public fields - accessible to all users
+     */
+    public function findAllPublic($limit = 100, $offset = 0) {
+        $pdo = $this->db->getPdo();
+        $stmt = $pdo->prepare("SELECT * FROM {$this->tableName}
+                               WHERE deleted_at IS NULL AND is_active = 1
+                               ORDER BY sort_order ASC, name ASC
+                               LIMIT ? OFFSET ?");
+        $stmt->execute([$limit, $offset]);
+        $data = $stmt->fetchAll();
+
+        $branches = [];
+        foreach ($data as $branchData) {
+            $branches[] = new OrganizationBranch($branchData);
+        }
+        return $branches;
+    }
+
+    /**
+     * Get branches as options for dropdown (for foreign key usage)
+     * Returns array of ['value' => id, 'label' => label]
+     */
+    public function getAsOptions($organizationId = null) {
+        $branches = $organizationId !== null
+            ? $this->findByOrganization($organizationId)
+            : $this->findAllPublic();
+
+        $options = [];
+        foreach ($branches as $branch) {
+            $options[] = [
+                'value' => $branch->getId(),
+                'label' => $branch->getLabel()
+            ];
+        }
+        return $options;
+    }
 }

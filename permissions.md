@@ -14,16 +14,20 @@ Permissions who can do what
     - All users (including guests) can view the public fields of any organization record.
     - User who creates the Organization is considered as "Organization Admin"
 - Organization Departments
-    - All Organization Worker can view and use this entity as foreign key in their records
-    - User must have Organization position of "Human Resource > Structure > Manager" to create the record
-    - Organization Admin can also create the record 
-    - Any user can read the record
-    - Super Admin can update and delete the record
+    - Read
+        - Registered User
+        - Organization Worker
+    - Create
+        - "Human Resource > Structure > Manager"
+    - CRUD Allowed
+        - Super Admin
 - Organization Facilities
     - Organization Admin and Organization Workers can see this dashboard page
-    - Organization Facility > Manager can add more departments
-    - Super Admin can CRUD facility_departments
+    - CRUD Allowed
+        - Organization Facility >  Manager
+        - Super Admin
 - Organization Branches
     - Organization Admin and Organization Workers can see this dashboard page
-    - Organization Facility > Manager can add more departments
-    - Super Admin can CRUD organization_branches
+    - CRUD Allowed
+        - Organization Facility > Space Management > Manager
+        - Super Admin

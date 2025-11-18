@@ -196,6 +196,19 @@ class OrganizationBranch {
         return $errors;
     }
 
+    /**
+     * Check if a field is public (visible to all)
+     * Per ENTITY_IMPLEMENTATION_SUMMARY.md
+     */
+    public static function isPublicField($fieldName) {
+        $publicFields = [
+            'id', 'organization_id', 'name', 'code', 'description',
+            'city', 'state', 'country', 'phone', 'email',
+            'is_active', 'branch_type'
+        ];
+        return in_array($fieldName, $publicFields);
+    }
+
     // Getters
     public function getId() { return $this->id; }
     public function getOrganizationId() { return $this->organization_id; }

@@ -2,8 +2,10 @@
 
 ## ✅ Organization Entity Implementation Complete
 
-All requirements from `entity_creation_instructions.md` and `permissions.md` have been successfully implemented for the Organization entity.
-
+Other Files to follow
+    - `permissions.md`
+    - `navigation.md`
+    - and rules in this file
 ---
 
 ## 📋 Implemented Features
