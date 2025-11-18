@@ -1,21 +1,29 @@
 Permissions who can do what
 
 - Super Admin
-    = The user with email sharma.yogesh.1234@gmail.com is designated as the Super Admin for the entire application.
-    = Has full access to all modules, settings, and records.
+    - The user with email sharma.yogesh.1234@gmail.com is designated as the Super Admin for the entire application.
+    - Has full access to all modules, settings, and records.
 - Guest Users (Unauthenticated Users)
-    = Can perform Forgot Password, Sign Up, and Login actions for their own user account.
-    = Cannot access or modify any other records.
+    - Can perform Forgot Password, Sign Up, and Login actions for their own user account.
+    - Cannot access or modify any other records.
 - Registered Users
-    = Can Create, Read, Update, and Delete their own user account (web profile).
-    = Other users can view only the public fields of a user’s profile.
+    - Can Create, Read, Update, and Delete their own user account (web profile).
+    - Other users can view only the public fields of a user’s profile.
 - Organizations
-    = The creator of an organization record has full CRUD permissions for that organization.
-    = All users (including guests) can view the public fields of any organization record.
-    = User who creates the Organization is considered as "Organization Admin"
+    - The creator of an organization record has full CRUD permissions for that organization.
+    - All users (including guests) can view the public fields of any organization record.
+    - User who creates the Organization is considered as "Organization Admin"
 - Organization Departments
-    = All users can view and use this entity as foreign key in their records
-    = User must have Organization position of "Human Resource > Structure > Manager" to create the record
-    = Organization Admin can also create the record 
-    = Any user can read the record
-    = Super Admin can update and delete the record
+    - All Organization Worker can view and use this entity as foreign key in their records
+    - User must have Organization position of "Human Resource > Structure > Manager" to create the record
+    - Organization Admin can also create the record 
+    - Any user can read the record
+    - Super Admin can update and delete the record
+- Organization Facilities
+    - Organization Admin and Organization Workers can see this dashboard page
+    - Organization Facility > Manager can add more departments
+    - Super Admin can CRUD facility_departments
+- Organization Branches
+    - Organization Admin and Organization Workers can see this dashboard page
+    - Organization Facility > Manager can add more departments
+    - Super Admin can CRUD organization_branches

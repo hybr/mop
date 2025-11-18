@@ -9,20 +9,45 @@
     <script src="/js/toast.js" defer></script>
 </head>
 <body>
+    <?php
+    // Subdomain detection logic
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+    $subdomain = null;
+    $currentOrganization = null;
+
+    // Extract subdomain if present (e.g., nbs.v4l.app -> nbs)
+    if (preg_match('/^([^.]+)\.v4l\.app$/i', $host, $matches)) {
+        $subdomain = $matches[1];
+
+        // Load organization by subdomain
+        if (isset($orgRepo)) {
+            $currentOrganization = $orgRepo->findBySubdomainPublic($subdomain);
+        }
+    }
+    ?>
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <a href="/" class="logo">V4L</a>
+                <?php if ($currentOrganization && !empty($currentOrganization['logo_url'])): ?>
+                    <a href="/" class="logo">
+                        <img src="<?php echo htmlspecialchars($currentOrganization['logo_url']); ?>"
+                             alt="<?php echo htmlspecialchars($currentOrganization['name'] ?? 'Organization'); ?>"
+                             style="height: 40px; max-width: 150px; object-fit: contain;">
+                    </a>
+                <?php else: ?>
+                    <a href="/" class="logo">V4L</a>
+                <?php endif; ?>
 
                 <nav class="nav">
-                    <a href="/organizations-directory.php">Directory</a>
                     <?php if (isset($auth) && $auth->isLoggedIn()): ?>
-                        <a href="/dashboard.php">Dashboard</a>
-                        <a href="/organizations.php">My Organizations</a>
-                        <a href="/organization-departments.php">Departments</a>
-                        <a href="/profile.php">Profile</a>
+                        <a href="/profile.php">My</a>
+                        <a href="/organizations.php">Organizations</a>
+                        <a href="/vacancies.php">Vacancies</a>
+                        <a href="/market.php">Market</a>
                         <a href="/logout.php" class="btn btn-primary">Logout</a>
                     <?php else: ?>
+                        <a href="/vacancies.php">Vacancies</a>
+                        <a href="/market.php">Market</a>
                         <a href="/login.php">Login</a>
                         <a href="/register.php" class="btn btn-primary">Sign Up</a>
                     <?php endif; ?>

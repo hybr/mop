@@ -25,6 +25,26 @@ include __DIR__ . '/../views/header.php';
         <a href="/organization-form.php" class="btn btn-primary">+ New Organization</a>
     </div>
 
+    <!-- Department Dashboards -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <h2 class="card-title">Department Dashboards</h2>
+        <p class="text-muted" style="margin-bottom: 1rem;">Manage different aspects of your organizations</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <a href="/organizations-facilities.php" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
+                Facilities
+            </a>
+            <a href="/organization-departments.php" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
+                Departments
+            </a>
+            <a href="/organizations.php" class="btn btn-secondary" style="padding: 1rem; text-align: center; opacity: 0.6;" title="Coming soon">
+                Human Resources
+            </a>
+            <a href="/organizations.php" class="btn btn-secondary" style="padding: 1rem; text-align: center; opacity: 0.6;" title="Coming soon">
+                Finance
+            </a>
+        </div>
+    </div>
+
     <!-- Active Organizations -->
     <div class="card">
         <h2 class="card-title">Active Organizations (<?php echo count($organizations); ?>)</h2>
