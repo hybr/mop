@@ -6,13 +6,43 @@ use App\Classes\Auth;
 $auth = new Auth();
 $auth->requireAuth();
 
+// Auto-select organization on dashboard load
+$auth->autoSelectOrganization();
+
 $user = $auth->getCurrentUser();
+$currentOrg = $auth->getCurrentOrganization();
 $pageTitle = 'Dashboard';
 include __DIR__ . '/../views/header.php';
 ?>
 
 <div class="py-4">
     <h1 class="mb-4">Dashboard</h1>
+
+    <!-- Current Organization -->
+    <?php if ($currentOrg): ?>
+        <div class="card" style="background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(79, 70, 229, 0.05) 100%); border-left: 4px solid var(--primary-color);">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <div>
+                    <p class="text-muted text-small mb-1">Current Organization</p>
+                    <h2 style="margin: 0; color: var(--primary-color);"><?php echo htmlspecialchars($currentOrg->getName()); ?></h2>
+                    <?php if ($currentOrg->getDescription()): ?>
+                        <p style="margin-top: 0.5rem; color: var(--text-light);"><?php echo htmlspecialchars($currentOrg->getDescription()); ?></p>
+                    <?php endif; ?>
+                </div>
+                <a href="/select-organization.php" class="btn btn-secondary" style="white-space: nowrap;">
+                    Switch Organization
+                </a>
+            </div>
+        </div>
+    <?php else: ?>
+        <div class="card" style="background-color: rgba(245, 158, 11, 0.1); border-left: 4px solid var(--warning-color);">
+            <p style="margin: 0;">
+                <strong>No organization selected.</strong>
+                <a href="/select-organization.php" class="link">Click here to select an organization</a> or
+                <a href="/organization-form.php" class="link">create a new one</a>.
+            </p>
+        </div>
+    <?php endif; ?>
 
     <div class="card">
         <div class="profile-header">

@@ -76,3 +76,19 @@ Page-Level Navigation Structure
             Update
 
             Delete
+
+    /organizations-facilities-branches-buildings
+
+        One organization branch may have more than one buildings. One building is must. 
+        This entity is called from /organizations-facilities.php
+        Building has postal address and geo cordinates and are must to enter. 
+        Provide a buttton at address, so when clicked it updates the correct geo cordinates.
+        Displays list of branche buildings with options to:
+
+            Create
+
+            Read
+
+            Update
+
+            Delete

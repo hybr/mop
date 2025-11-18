@@ -78,6 +78,13 @@ class Organization {
     }
 
     /**
+     * Get organization name (alias for getShortName for consistency)
+     */
+    public function getName() {
+        return $this->short_name;
+    }
+
+    /**
      * Get full organization name (short name + legal structure)
      */
     public function getFullName() {

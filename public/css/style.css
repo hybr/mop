@@ -96,6 +96,60 @@ body {
     background-color: var(--bg-color);
 }
 
+/* Organization Selector in Nav */
+.org-selector {
+    position: relative;
+}
+
+.org-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem !important;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.org-link:hover {
+    background-color: rgba(79, 70, 229, 0.1) !important;
+    border-color: var(--primary-color);
+}
+
+.org-name {
+    font-weight: 500;
+    color: var(--primary-color);
+}
+
+.org-code {
+    color: var(--text-light);
+    font-size: 0.875rem;
+}
+
+.org-arrow {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    transition: transform 0.2s;
+}
+
+.org-link:hover .org-arrow {
+    transform: translateY(2px);
+}
+
+@media (max-width: 768px) {
+    .org-selector {
+        order: -1;
+        width: 100%;
+    }
+
+    .org-link {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+
 /* Forms */
 .form-container {
     background-color: var(--white);

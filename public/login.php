@@ -20,6 +20,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $result = $auth->login($identifier, $password);
 
+        // Try to auto-select organization
+        $auth->autoSelectOrganization();
+
         // Redirect to dashboard on successful login
         header('Location: /dashboard.php');
         exit;

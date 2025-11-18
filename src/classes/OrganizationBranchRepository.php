@@ -83,6 +83,25 @@ class OrganizationBranchRepository {
     }
 
     /**
+     * Get all active branches (non-deleted)
+     */
+    public function findAll($limit = 100, $offset = 0) {
+        $pdo = $this->db->getPdo();
+        $stmt = $pdo->prepare("SELECT * FROM {$this->tableName}
+                               WHERE deleted_at IS NULL
+                               ORDER BY sort_order ASC, name ASC
+                               LIMIT ? OFFSET ?");
+        $stmt->execute([$limit, $offset]);
+        $data = $stmt->fetchAll();
+
+        $branches = [];
+        foreach ($data as $branchData) {
+            $branches[] = new OrganizationBranch($branchData);
+        }
+        return $branches;
+    }
+
+    /**
      * Get all branches for an organization
      */
     public function findByOrganization($organizationId, $limit = 100) {

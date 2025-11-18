@@ -311,4 +311,134 @@ class Auth {
             'message' => 'Password updated successfully'
         ];
     }
+
+    /**
+     * Set current organization for session
+     */
+    public function setCurrentOrganization($organizationId) {
+        if (!$this->isLoggedIn()) {
+            throw new \Exception("User not logged in");
+        }
+
+        $user = $this->getCurrentUser();
+
+        // Verify user has access to this organization
+        $orgRepo = new OrganizationRepository();
+        $org = $orgRepo->findById($organizationId, $user->getId());
+
+        if (!$org) {
+            throw new \Exception("Organization not found or access denied");
+        }
+
+        $_SESSION['current_organization_id'] = $organizationId;
+        $_SESSION['current_organization'] = $org->toArray();
+
+        return $org;
+    }
+
+    /**
+     * Get current selected organization
+     */
+    public function getCurrentOrganization() {
+        if (!$this->isLoggedIn()) {
+            return null;
+        }
+
+        if (isset($_SESSION['current_organization'])) {
+            return new Organization($_SESSION['current_organization']);
+        }
+
+        return null;
+    }
+
+    /**
+     * Get current organization ID
+     */
+    public function getCurrentOrganizationId() {
+        return $_SESSION['current_organization_id'] ?? null;
+    }
+
+    /**
+     * Clear current organization
+     */
+    public function clearCurrentOrganization() {
+        unset($_SESSION['current_organization_id']);
+        unset($_SESSION['current_organization']);
+    }
+
+    /**
+     * Auto-select organization based on user's organizations
+     * Returns true if organization was selected, false otherwise
+     */
+    public function autoSelectOrganization() {
+        if (!$this->isLoggedIn()) {
+            return false;
+        }
+
+        // If already selected, keep it
+        if ($this->getCurrentOrganizationId()) {
+            return true;
+        }
+
+        $user = $this->getCurrentUser();
+        $orgRepo = new OrganizationRepository();
+
+        // Try subdomain detection first
+        $subdomain = $this->detectSubdomain();
+        if ($subdomain) {
+            $org = $orgRepo->findBySubdomain($subdomain, $user->getId());
+            if ($org) {
+                $this->setCurrentOrganization($org->getId());
+                return true;
+            }
+        }
+
+        // Get user's organizations
+        $organizations = $orgRepo->findAllByUser($user->getId());
+
+        // If only one organization, select it automatically
+        if (count($organizations) === 1) {
+            $this->setCurrentOrganization($organizations[0]->getId());
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Detect subdomain from current request
+     * Returns subdomain or null if not applicable
+     */
+    private function detectSubdomain() {
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+
+        // Remove port if present
+        $host = explode(':', $host)[0];
+
+        // Split by dots
+        $parts = explode('.', $host);
+
+        // If we have at least 3 parts (subdomain.domain.tld) and it's not 'www'
+        if (count($parts) >= 3 && $parts[0] !== 'www') {
+            return $parts[0];
+        }
+
+        return null;
+    }
+
+    /**
+     * Require organization to be selected
+     * Redirects to organization selection page if not selected
+     */
+    public function requireOrganization() {
+        $this->requireAuth();
+
+        // Try auto-select first
+        if (!$this->autoSelectOrganization()) {
+            // Redirect to organization selection
+            $currentUrl = $_SERVER['REQUEST_URI'];
+            header('Location: /select-organization.php?redirect=' . urlencode($currentUrl));
+            exit;
+        }
+    }
 }

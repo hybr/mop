@@ -406,6 +406,32 @@ class OrganizationRepository {
     }
 
     /**
+     * Get organization by subdomain for authenticated user
+     * Returns full Organization object if user owns it
+     */
+    public function findBySubdomain($subdomain, $userId) {
+        if ($this->db->getDriver() === 'sqlite') {
+            $pdo = $this->db->getPdo();
+            $stmt = $pdo->prepare("SELECT * FROM {$this->tableName}
+                                   WHERE subdomain = ? AND created_by = ? AND deleted_at IS NULL");
+            $stmt->execute([$subdomain, $userId]);
+            $data = $stmt->fetch();
+
+            if ($data) {
+                return new Organization($data);
+            }
+        } else {
+            $response = $this->db->request('GET', $this->tableName . '?subdomain=eq.' . urlencode($subdomain) . '&created_by=eq.' . $userId . '&deleted_at=is.null');
+
+            if ($response['success'] && !empty($response['data'])) {
+                return new Organization($response['data'][0]);
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Find organization by subdomain (PUBLIC - returns only public fields)
      * Per permissions.md: All users (including guests) can view public fields
      */

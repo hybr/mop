@@ -26,7 +26,12 @@ Permissions who can do what
     - CRUD Allowed
         - Organization Facility >  Manager
         - Super Admin
-- Organization Branches
+- Organization Branches (/organizations-facilities-branches)
+    - Organization Admin and Organization Workers can see this dashboard page
+    - CRUD Allowed
+        - Organization Facility > Space Management > Manager
+        - Super Admin
+- Organization Branch Buildings (/organizations-facilities-branches-buildings)
     - Organization Admin and Organization Workers can see this dashboard page
     - CRUD Allowed
         - Organization Facility > Space Management > Manager

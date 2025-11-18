@@ -40,8 +40,23 @@
 
                 <nav class="nav">
                     <?php if (isset($auth) && $auth->isLoggedIn()): ?>
+                        <?php
+                        $currentOrg = $auth->getCurrentOrganization();
+                        ?>
                         <a href="/profile.php">My</a>
-                        <a href="/organizations.php">Organizations</a>
+                        <div class="org-selector">
+                            <a href="/select-organization.php" class="org-link" title="Switch Organization">
+                                <?php if ($currentOrg): ?>
+                                    <span class="org-name"><?php echo htmlspecialchars($currentOrg->getName()); ?></span>
+                                    <?php if ($currentOrg->getSubdomain()): ?>
+                                        <span class="org-code">(<?php echo htmlspecialchars($currentOrg->getSubdomain()); ?>)</span>
+                                    <?php endif; ?>
+                                <?php else: ?>
+                                    <span class="org-name">Select Organization</span>
+                                <?php endif; ?>
+                                <span class="org-arrow">▼</span>
+                            </a>
+                        </div>
                         <a href="/vacancies.php">Vacancies</a>
                         <a href="/market.php">Market</a>
                         <a href="/logout.php" class="btn btn-primary">Logout</a>
