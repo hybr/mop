@@ -16,7 +16,10 @@
       "Bash(php database/migrate_organization_branches.php:*)",
       "Bash(sqlite3:*)",
       "Bash(move:*)",
-      "Bash(mv:*)"
+      "Bash(mv:*)",
+      "Bash(php:*)",
+      "Bash(bash:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

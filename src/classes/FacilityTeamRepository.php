@@ -11,7 +11,7 @@ use App\Config\Database;
  */
 class FacilityTeamRepository {
     private $db;
-    private $tableName = 'facility_teams';
+    private $tableName = 'department_teams';
 
     public function __construct() {
         $this->db = Database::getInstance();
@@ -21,7 +21,7 @@ class FacilityTeamRepository {
      * Create a new facility team
      * Per permissions.md: Organization Admin and Organization Workers can create
      */
-    public function create(FacilityTeam $team, $userId, $userEmail) {
+    public function create(DepartmentTeam $team, $userId, $userEmail) {
         // Check code uniqueness
         if ($this->codeExists($team->getCode())) {
             throw new \Exception("Facility team code '{$team->getCode()}' is already taken. Please choose another.");
@@ -36,7 +36,7 @@ class FacilityTeamRepository {
             'code' => $team->getCode(),
             'description' => $team->getDescription(),
             'parent_team_id' => $team->getParentTeamId(),
-            'facility_id' => $team->getFacilityId(),
+            'organization_department_id' => $team->getOrganizationDepartmentId(),
             'organization_id' => $team->getOrganizationId(),
             'is_active' => $team->getIsActive() ?? true,
             'sort_order' => $team->getSortOrder() ?? 0,
@@ -76,13 +76,13 @@ class FacilityTeamRepository {
             $data = $stmt->fetch();
 
             if ($data) {
-                return new FacilityTeam($data);
+                return new DepartmentTeam($data);
             }
         } else {
             $response = $this->db->request('GET', $this->tableName . '?id=eq.' . $id . '&deleted_at=is.null');
 
             if ($response['success'] && !empty($response['data'])) {
-                return new FacilityTeam($response['data'][0]);
+                return new DepartmentTeam($response['data'][0]);
             }
         }
 
@@ -105,7 +105,7 @@ class FacilityTeamRepository {
 
             $teams = [];
             foreach ($data as $teamData) {
-                $teams[] = new FacilityTeam($teamData);
+                $teams[] = new DepartmentTeam($teamData);
             }
             return $teams;
         } else {
@@ -114,7 +114,7 @@ class FacilityTeamRepository {
             if ($response['success']) {
                 $teams = [];
                 foreach ($response['data'] as $teamData) {
-                    $teams[] = new FacilityTeam($teamData);
+                    $teams[] = new DepartmentTeam($teamData);
                 }
                 return $teams;
             }
@@ -150,7 +150,7 @@ class FacilityTeamRepository {
 
             $teams = [];
             foreach ($data as $teamData) {
-                $teams[] = new FacilityTeam($teamData);
+                $teams[] = new DepartmentTeam($teamData);
             }
             return $teams;
         } else {
@@ -167,7 +167,7 @@ class FacilityTeamRepository {
             if ($response['success']) {
                 $teams = [];
                 foreach ($response['data'] as $teamData) {
-                    $teams[] = new FacilityTeam($teamData);
+                    $teams[] = new DepartmentTeam($teamData);
                 }
                 return $teams;
             }
@@ -180,7 +180,7 @@ class FacilityTeamRepository {
      * Update facility team
      * Per permissions.md: Organization Admin can update
      */
-    public function update(FacilityTeam $team, $userId, $userEmail) {
+    public function update(DepartmentTeam $team, $userId, $userEmail) {
         if (!$team->getId()) {
             throw new \Exception("Facility department ID is required for update");
         }
@@ -325,7 +325,7 @@ class FacilityTeamRepository {
 
             $teams = [];
             foreach ($data as $teamData) {
-                $teams[] = new FacilityTeam($teamData);
+                $teams[] = new DepartmentTeam($teamData);
             }
             return $teams;
         } else {
@@ -334,7 +334,7 @@ class FacilityTeamRepository {
             if ($response['success']) {
                 $teams = [];
                 foreach ($response['data'] as $teamData) {
-                    $teams[] = new FacilityTeam($teamData);
+                    $teams[] = new DepartmentTeam($teamData);
                 }
                 return $teams;
             }
@@ -383,7 +383,7 @@ class FacilityTeamRepository {
 
             $teams = [];
             foreach ($data as $teamData) {
-                $teams[] = new FacilityTeam($teamData);
+                $teams[] = new DepartmentTeam($teamData);
             }
             return $teams;
         } else {
@@ -392,7 +392,7 @@ class FacilityTeamRepository {
             if ($response['success']) {
                 $teams = [];
                 foreach ($response['data'] as $teamData) {
-                    $teams[] = new FacilityTeam($teamData);
+                    $teams[] = new DepartmentTeam($teamData);
                 }
                 return $teams;
             }

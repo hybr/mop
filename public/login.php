@@ -7,7 +7,7 @@ $auth = new Auth();
 
 // Redirect if already logged in
 if ($auth->isLoggedIn()) {
-    header('Location: /dashboard.php');
+    header('Location: /market.php');
     exit;
 }
 
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $auth->autoSelectOrganization();
 
         // Redirect to dashboard on successful login
-        header('Location: /dashboard.php');
+        header('Location: /market.php');
         exit;
 
     } catch (Exception $e) {

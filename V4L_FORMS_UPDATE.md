@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = $auth->login($identifier, $password);
 
         // Redirect to dashboard on successful login
-        header('Location: /dashboard.php');
+        header('Location: /market.php');
         exit;
 
     } catch (Exception $e) {

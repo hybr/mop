@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../src/includes/autoload.php';
 
 use App\Classes\Auth;
+use App\Components\PhoneNumberField;
 
 $auth = new Auth();
 
@@ -20,7 +21,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
     $confirmPassword = $_POST['confirm_password'] ?? '';
     $fullName = $_POST['full_name'] ?? '';
-    $phone = $_POST['phone'] ?? '';
+
+    // Combine country code and phone number
+    $phone = PhoneNumberField::combine(
+        $_POST['country_code'] ?? '',
+        $_POST['phone_number'] ?? ''
+    );
 
     try {
         // Validate
@@ -108,19 +114,12 @@ include __DIR__ . '/../views/header.php';
                 <small class="text-muted text-small">Used for password recovery</small>
             </div>
 
-            <div class="form-group">
-                <label for="phone" class="form-label">Phone Number (Optional)</label>
-                <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    class="form-input"
-                    value="<?php echo htmlspecialchars($_POST['phone'] ?? ''); ?>"
-                    placeholder="+1-555-1234"
-                    autocomplete="tel"
-                >
-                <small class="text-muted text-small">Can also be used for password recovery</small>
-            </div>
+            <?php echo PhoneNumberField::render([
+                'label' => 'Phone Number (Optional)',
+                'selected_country_code' => $_POST['country_code'] ?? '+91',
+                'phone_number_value' => $_POST['phone_number'] ?? '',
+                'help_text' => 'Can also be used for password recovery'
+            ]); ?>
 
             <div class="form-group">
                 <label for="password" class="form-label">Password *</label>

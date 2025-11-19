@@ -5,6 +5,7 @@ use App\Classes\Auth;
 use App\Classes\OrganizationBranch;
 use App\Classes\OrganizationBranchRepository;
 use App\Classes\OrganizationRepository;
+use App\Components\PhoneNumberField;
 
 $auth = new Auth();
 $auth->requireAuth();
@@ -17,6 +18,25 @@ $errors = [];
 $success = false;
 $isEdit = false;
 $branch = new OrganizationBranch();
+
+// Branch type options (ENUM values)
+$branchTypes = [
+    'headquarter' => 'Headquarter',
+    'regional_office' => 'Regional Office',
+    'branch_office' => 'Branch Office',
+    'warehouse' => 'Warehouse',
+    'retail' => 'Retail Location',
+    'manufacturing' => 'Manufacturing',
+    'other' => 'Other'
+];
+
+// Size category options (ENUM values)
+$sizeCategories = [
+    'small' => 'Small (1-10 employees)',
+    'medium' => 'Medium (11-50 employees)',
+    'large' => 'Large (51-200 employees)',
+    'enterprise' => 'Enterprise (200+ employees)'
+];
 
 // Check if editing existing branch
 if (isset($_GET['id'])) {
@@ -38,22 +58,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $branch->setDescription($_POST['description'] ?? '');
         $branch->setOrganizationId($_POST['organization_id'] ?? null);
 
-        // Address fields
-        $branch->setAddressLine1($_POST['address_line1'] ?? '');
-        $branch->setAddressLine2($_POST['address_line2'] ?? '');
-        $branch->setCity($_POST['city'] ?? '');
-        $branch->setState($_POST['state'] ?? '');
-        $branch->setCountry($_POST['country'] ?? '');
-        $branch->setPostalCode($_POST['postal_code'] ?? '');
+        // Contact fields - combine country code and phone number
+        $phone = PhoneNumberField::combine(
+            $_POST['country_code'] ?? '',
+            $_POST['phone_number'] ?? ''
+        );
+        $branch->setPhone($phone);
 
-        // Contact fields
-        $branch->setPhone($_POST['phone'] ?? '');
         $branch->setEmail($_POST['email'] ?? '');
         $branch->setWebsite($_POST['website'] ?? '');
 
-        // Branch contact person
+        // Branch contact person - combine country code and phone number
         $branch->setContactPersonName($_POST['contact_person_name'] ?? '');
-        $branch->setContactPersonPhone($_POST['contact_person_phone'] ?? '');
+
+        $contactPhone = PhoneNumberField::combine(
+            $_POST['contact_country_code'] ?? '',
+            $_POST['contact_phone_number'] ?? ''
+        );
+        $branch->setContactPersonPhone($contactPhone);
+
         $branch->setContactPersonEmail($_POST['contact_person_email'] ?? '');
 
         // Status and metadata
@@ -70,12 +93,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($isEdit) {
                 // Update existing
                 $branchRepo->update($branch, $user->getId(), $user->getEmail());
-                $success = "Branch updated successfully!";
+                $successMsg = 'Branch "' . $branch->getName() . '" updated successfully!';
+                header('Location: /organizations-facilities-branches.php?success=' . urlencode($successMsg));
+                exit;
             } else {
                 // Create new
                 $branch = $branchRepo->create($branch, $user->getId(), $user->getEmail());
-                $success = "Branch created successfully!";
-                $isEdit = true; // Switch to edit mode after creation
+                $successMsg = 'Branch "' . $branch->getName() . '" created successfully!';
+                header('Location: /organizations-facilities-branches.php?success=' . urlencode($successMsg));
+                exit;
             }
         }
     } catch (Exception $e) {
@@ -83,8 +109,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Get organizations for dropdown
-$organizations = $orgRepo->findAllByUser($user->getId());
+// Get current organization
+$currentOrg = $auth->getCurrentOrganization();
+
+// If creating new branch, require organization to be selected
+if (!$isEdit && !$currentOrg) {
+    header('Location: /organization.php?message=' . urlencode('Please select an organization first'));
+    exit;
+}
+
+// If creating new branch, set organization_id to current organization
+if (!$isEdit && $currentOrg) {
+    $branch->setOrganizationId($currentOrg->getId());
+}
+
+// Get the organization for display
+$organization = null;
+if ($branch->getOrganizationId()) {
+    $organization = $orgRepo->findById($branch->getOrganizationId(), $user->getId());
+}
 
 $pageTitle = $isEdit ? 'Edit Branch' : 'New Branch';
 include __DIR__ . '/../views/header.php';
@@ -165,26 +208,20 @@ include __DIR__ . '/../views/header.php';
                     <small class="text-muted">Optional short code for this branch</small>
                 </div>
 
-                <!-- Organization Field -->
+                <!-- Organization Field (Readonly) -->
                 <div style="margin-bottom: 1.5rem;">
-                    <label for="organization_id" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
+                    <label for="organization_name" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
                         Organization <span style="color: #f44336;">*</span>
                     </label>
-                    <select
-                        id="organization_id"
-                        name="organization_id"
-                        required
-                        style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"
+                    <input
+                        type="text"
+                        id="organization_name"
+                        value="<?php echo $organization ? htmlspecialchars($organization->getName()) : 'No organization selected'; ?>"
+                        readonly
+                        style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem; background-color: var(--bg-light); color: var(--text-color);"
                     >
-                        <option value="">Select Organization</option>
-                        <?php foreach ($organizations as $org): ?>
-                            <option value="<?php echo $org->getId(); ?>"
-                                <?php echo ($branch->getOrganizationId() === $org->getId()) ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($org->getName()); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    <small class="text-muted">The organization this branch belongs to</small>
+                    <input type="hidden" name="organization_id" value="<?php echo htmlspecialchars($branch->getOrganizationId() ?? ''); ?>">
+                    <small class="text-muted">Branch belongs to the currently selected organization</small>
                 </div>
 
                 <!-- Description Field -->
@@ -213,13 +250,12 @@ include __DIR__ . '/../views/header.php';
                         style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"
                     >
                         <option value="">Select Type</option>
-                        <option value="headquarters" <?php echo ($branch->getBranchType() === 'headquarters') ? 'selected' : ''; ?>>Headquarters</option>
-                        <option value="regional_office" <?php echo ($branch->getBranchType() === 'regional_office') ? 'selected' : ''; ?>>Regional Office</option>
-                        <option value="branch_office" <?php echo ($branch->getBranchType() === 'branch_office') ? 'selected' : ''; ?>>Branch Office</option>
-                        <option value="warehouse" <?php echo ($branch->getBranchType() === 'warehouse') ? 'selected' : ''; ?>>Warehouse</option>
-                        <option value="retail" <?php echo ($branch->getBranchType() === 'retail') ? 'selected' : ''; ?>>Retail Location</option>
-                        <option value="manufacturing" <?php echo ($branch->getBranchType() === 'manufacturing') ? 'selected' : ''; ?>>Manufacturing</option>
-                        <option value="other" <?php echo ($branch->getBranchType() === 'other') ? 'selected' : ''; ?>>Other</option>
+                        <?php foreach ($branchTypes as $value => $label): ?>
+                            <option value="<?php echo htmlspecialchars($value); ?>"
+                                <?php echo ($branch->getBranchType() === $value) ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($label); ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
                     <small class="text-muted">Type of branch location</small>
                 </div>
@@ -235,10 +271,12 @@ include __DIR__ . '/../views/header.php';
                         style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"
                     >
                         <option value="">Select Size</option>
-                        <option value="small" <?php echo ($branch->getSizeCategory() === 'small') ? 'selected' : ''; ?>>Small (1-10 employees)</option>
-                        <option value="medium" <?php echo ($branch->getSizeCategory() === 'medium') ? 'selected' : ''; ?>>Medium (11-50 employees)</option>
-                        <option value="large" <?php echo ($branch->getSizeCategory() === 'large') ? 'selected' : ''; ?>>Large (51-200 employees)</option>
-                        <option value="enterprise" <?php echo ($branch->getSizeCategory() === 'enterprise') ? 'selected' : ''; ?>>Enterprise (200+ employees)</option>
+                        <?php foreach ($sizeCategories as $value => $label): ?>
+                            <option value="<?php echo htmlspecialchars($value); ?>"
+                                <?php echo ($branch->getSizeCategory() === $value) ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($label); ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
                     <small class="text-muted">Approximate size of this branch</small>
                 </div>
@@ -259,101 +297,6 @@ include __DIR__ . '/../views/header.php';
                 </div>
             </div>
 
-            <!-- Address Section -->
-            <div style="margin-bottom: 2rem;">
-                <h2 style="margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--border-color);">
-                    Address
-                </h2>
-
-                <!-- Address Line 1 -->
-                <div style="margin-bottom: 1.5rem;">
-                    <label for="address_line1" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                        Address Line 1
-                    </label>
-                    <input
-                        type="text"
-                        id="address_line1"
-                        name="address_line1"
-                        value="<?php echo htmlspecialchars($branch->getAddressLine1() ?? ''); ?>"
-                        style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"
-                        placeholder="Street address"
-                    >
-                </div>
-
-                <!-- Address Line 2 -->
-                <div style="margin-bottom: 1.5rem;">
-                    <label for="address_line2" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                        Address Line 2
-                    </label>
-                    <input
-                        type="text"
-                        id="address_line2"
-                        name="address_line2"
-                        value="<?php echo htmlspecialchars($branch->getAddressLine2() ?? ''); ?>"
-                        style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"
-                        placeholder="Suite, unit, building, floor, etc."
-                    >
-                </div>
-
-                <!-- City, State, Postal Code Row -->
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
-                    <div>
-                        <label for="city" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                            City
-                        </label>
-                        <input
-                            type="text"
-                            id="city"
-                            name="city"
-                            value="<?php echo htmlspecialchars($branch->getCity() ?? ''); ?>"
-                            style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"
-                            placeholder="City"
-                        >
-                    </div>
-                    <div>
-                        <label for="state" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                            State/Province
-                        </label>
-                        <input
-                            type="text"
-                            id="state"
-                            name="state"
-                            value="<?php echo htmlspecialchars($branch->getState() ?? ''); ?>"
-                            style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"
-                            placeholder="State"
-                        >
-                    </div>
-                    <div>
-                        <label for="postal_code" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                            Postal Code
-                        </label>
-                        <input
-                            type="text"
-                            id="postal_code"
-                            name="postal_code"
-                            value="<?php echo htmlspecialchars($branch->getPostalCode() ?? ''); ?>"
-                            style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"
-                            placeholder="ZIP/Postal"
-                        >
-                    </div>
-                </div>
-
-                <!-- Country -->
-                <div style="margin-bottom: 1.5rem;">
-                    <label for="country" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                        Country
-                    </label>
-                    <input
-                        type="text"
-                        id="country"
-                        name="country"
-                        value="<?php echo htmlspecialchars($branch->getCountry() ?? ''); ?>"
-                        style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"
-                        placeholder="Country"
-                    >
-                </div>
-            </div>
-
             <!-- Contact Information Section -->
             <div style="margin-bottom: 2rem;">
                 <h2 style="margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--border-color);">
@@ -361,19 +304,11 @@ include __DIR__ . '/../views/header.php';
                 </h2>
 
                 <!-- Phone -->
-                <div style="margin-bottom: 1.5rem;">
-                    <label for="phone" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                        Phone
-                    </label>
-                    <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        value="<?php echo htmlspecialchars($branch->getPhone() ?? ''); ?>"
-                        style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"
-                        placeholder="Branch phone number"
-                    >
-                </div>
+                <?php echo PhoneNumberField::render([
+                    'label' => 'Phone',
+                    'value' => $branch->getPhone(),
+                    'help_text' => 'Branch contact phone number'
+                ]); ?>
 
                 <!-- Email -->
                 <div style="margin-bottom: 1.5rem;">
@@ -428,19 +363,14 @@ include __DIR__ . '/../views/header.php';
                 </div>
 
                 <!-- Contact Person Phone -->
-                <div style="margin-bottom: 1.5rem;">
-                    <label for="contact_person_phone" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                        Phone
-                    </label>
-                    <input
-                        type="tel"
-                        id="contact_person_phone"
-                        name="contact_person_phone"
-                        value="<?php echo htmlspecialchars($branch->getContactPersonPhone() ?? ''); ?>"
-                        style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"
-                        placeholder="Contact person phone"
-                    >
-                </div>
+                <?php echo PhoneNumberField::render([
+                    'label' => 'Phone',
+                    'country_code_name' => 'contact_country_code',
+                    'phone_number_name' => 'contact_phone_number',
+                    'value' => $branch->getContactPersonPhone(),
+                    'id_prefix' => 'contact_',
+                    'help_text' => 'Contact person phone number'
+                ]); ?>
 
                 <!-- Contact Person Email -->
                 <div style="margin-bottom: 1.5rem;">
@@ -522,9 +452,9 @@ include __DIR__ . '/../views/header.php';
         <ul style="margin: 0; padding-left: 1.5rem; line-height: 1.8;">
             <li><strong>Branch Name:</strong> Use descriptive names like "Downtown Office" or "North Campus"</li>
             <li><strong>Branch Code:</strong> Optional short identifier for quick reference</li>
-            <li><strong>Address:</strong> Complete address information helps with location services and reporting</li>
             <li><strong>Contact Person:</strong> Primary point of contact for this branch location</li>
             <li><strong>Branch Type:</strong> Categorize branches for better organization and reporting</li>
+            <li><strong>Buildings:</strong> Address information will be managed at the building level within each branch</li>
         </ul>
     </div>
 </div>

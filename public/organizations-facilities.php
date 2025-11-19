@@ -4,6 +4,7 @@ require_once __DIR__ . '/../src/includes/autoload.php';
 use App\Classes\Auth;
 use App\Classes\OrganizationRepository;
 use App\Classes\FacilityTeamRepository;
+use App\Classes\DepartmentTeam;
 
 $auth = new Auth();
 
@@ -159,7 +160,7 @@ include __DIR__ . '/../views/header.php';
                                 <td style="padding: 1rem;">
                                     <?php
                                     if ($dept->getOrganizationId()) {
-                                        $org = $orgRepo->findById($dept->getOrganizationId());
+                                        $org = $orgRepo->findById($dept->getOrganizationId(), $user->getId());
                                         echo $org ? htmlspecialchars($org->getName()) : 'Unknown';
                                     } else {
                                         echo '<span class="text-muted">Global</span>';

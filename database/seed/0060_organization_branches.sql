@@ -9,14 +9,6 @@ CREATE TABLE IF NOT EXISTS organization_branches (
     code TEXT,
     description TEXT,
 
-    -- Address fields
-    address_line1 TEXT,
-    address_line2 TEXT,
-    city TEXT,
-    state TEXT,
-    country TEXT,
-    postal_code TEXT,
-
     -- Contact fields
     phone TEXT,
     email TEXT,
@@ -49,9 +41,6 @@ CREATE TABLE IF NOT EXISTS organization_branches (
 -- Create indexes for organization_branches table
 CREATE INDEX IF NOT EXISTS idx_org_branches_organization_id ON organization_branches(organization_id);
 CREATE INDEX IF NOT EXISTS idx_org_branches_code ON organization_branches(code);
-CREATE INDEX IF NOT EXISTS idx_org_branches_city ON organization_branches(city);
-CREATE INDEX IF NOT EXISTS idx_org_branches_state ON organization_branches(state);
-CREATE INDEX IF NOT EXISTS idx_org_branches_country ON organization_branches(country);
 CREATE INDEX IF NOT EXISTS idx_org_branches_deleted_at ON organization_branches(deleted_at);
 CREATE INDEX IF NOT EXISTS idx_org_branches_is_active ON organization_branches(is_active);
 CREATE INDEX IF NOT EXISTS idx_org_branches_created_by ON organization_branches(created_by);
@@ -63,5 +52,5 @@ CREATE INDEX IF NOT EXISTS idx_org_branches_branch_type ON organization_branches
 -- Note: Branches are specific to organizations and should be created per organization as needed
 -- This table starts empty - organizations will create their own branches
 -- Example:
--- INSERT INTO organization_branches (id, organization_id, name, code, city, state, country, is_active) VALUES
--- ('branch-001', 'org-001', 'New York HQ', 'NY-HQ', 'New York', 'NY', 'USA', 1);
+-- INSERT INTO organization_branches (id, organization_id, name, code, is_active) VALUES
+-- ('branch-001', 'org-001', 'New York HQ', 'NY-HQ', 1);

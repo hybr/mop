@@ -43,9 +43,9 @@
                         <?php
                         $currentOrg = $auth->getCurrentOrganization();
                         ?>
-                        <a href="/profile.php">My</a>
+                        <a href="/dashboard/">My</a>
                         <div class="org-selector">
-                            <a href="/select-organization.php" class="org-link" title="Switch Organization">
+                            <a href="/organizations/" class="org-link" title="Switch Organization">
                                 <?php if ($currentOrg): ?>
                                     <span class="org-name"><?php echo htmlspecialchars($currentOrg->getName()); ?></span>
                                     <?php if ($currentOrg->getSubdomain()): ?>
@@ -58,13 +58,13 @@
                             </a>
                         </div>
                         <a href="/vacancies.php">Vacancies</a>
-                        <a href="/market.php">Market</a>
-                        <a href="/logout.php" class="btn btn-primary">Logout</a>
+                        <a href="/market/">Market</a>
+                        <a href="/auth/logout/" class="btn btn-primary">Logout</a>
                     <?php else: ?>
                         <a href="/vacancies.php">Vacancies</a>
-                        <a href="/market.php">Market</a>
-                        <a href="/login.php">Login</a>
-                        <a href="/register.php" class="btn btn-primary">Sign Up</a>
+                        <a href="/market/">Market</a>
+                        <a href="/auth/login/">Login</a>
+                        <a href="/auth/register/" class="btn btn-primary">Sign Up</a>
                     <?php endif; ?>
                 </nav>
             </div>

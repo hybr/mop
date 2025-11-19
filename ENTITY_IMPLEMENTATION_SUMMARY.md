@@ -132,6 +132,79 @@ Created `organization-view.php` with:
 - ✅ Toast notification system
 - ✅ Public/private field separation
 
+### 7. Phone Number Field Standard ✅
+**All forms with phone number fields must use the PhoneNumberField component:**
+
+#### PhoneNumberField Component
+A reusable component located at `src/components/PhoneNumberField.php` that handles:
+- 52 country codes with flag emojis
+- Parsing phone numbers (splitting into country code + number)
+- Combining country code + number for storage
+- Rendering HTML with proper styling
+
+#### Implementation Pattern
+```php
+// 1. Import the component
+use App\Components\PhoneNumberField;
+
+// 2. Form submission - combine country code and phone number
+$phone = PhoneNumberField::combine(
+    $_POST['country_code'] ?? '',
+    $_POST['phone_number'] ?? ''
+);
+$entity->setPhone($phone);
+
+// 3. Render the field in HTML
+<?php echo PhoneNumberField::render([
+    'label' => 'Phone',
+    'value' => $entity->getPhone(),
+    'help_text' => 'Contact phone number'
+]); ?>
+
+// 4. For multiple phone fields (e.g., contact person phone)
+<?php echo PhoneNumberField::render([
+    'label' => 'Contact Phone',
+    'country_code_name' => 'contact_country_code',
+    'phone_number_name' => 'contact_phone_number',
+    'value' => $entity->getContactPhone(),
+    'id_prefix' => 'contact_',
+    'help_text' => 'Contact person phone number'
+]); ?>
+```
+
+#### Available Options
+- `label` - Field label (default: 'Phone')
+- `value` - Full phone number with country code (automatically parsed)
+- `country_code_name` - Name for country code field (default: 'country_code')
+- `phone_number_name` - Name for phone number field (default: 'phone_number')
+- `id_prefix` - Prefix for field IDs (useful for multiple fields)
+- `help_text` - Help text below field
+- `required` - Mark field as required (default: false)
+- `placeholder` - Placeholder for phone number (default: '9876543210')
+
+#### Component Methods
+- `PhoneNumberField::render($options)` - Render HTML for phone field
+- `PhoneNumberField::parse($fullPhone)` - Parse phone into ['country_code', 'phone_number']
+- `PhoneNumberField::combine($countryCode, $phoneNumber)` - Combine into full phone number
+- `PhoneNumberField::getCountryCodes()` - Get all country codes array
+
+#### Features
+- ✅ 52 country codes with flag emojis
+- ✅ Side-by-side layout (country code dropdown + phone input)
+- ✅ Default country: India (+91)
+- ✅ Only digits allowed in phone number field
+- ✅ Automatic parsing for edit mode
+- ✅ Stored as: `+919876543210`
+- ✅ Responsive design
+- ✅ Reusable across all forms
+
+#### Files Using This Component
+- ✅ `public/register.php` - User registration phone
+- ✅ `public/organization-form.php` - Organization contact phone
+- ✅ `public/branch-form.php` - Branch phone and contact person phone
+
+**All future forms with phone fields MUST use this component for consistency.**
+
 ---
 
 ## 📁 Files Created/Modified

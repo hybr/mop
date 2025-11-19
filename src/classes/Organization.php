@@ -10,7 +10,6 @@ class Organization {
     private $description;
     private $email;
     private $phone;
-    private $address;
     private $website;
     private $logo_url;
     private $is_active;
@@ -40,7 +39,6 @@ class Organization {
         if (isset($data['description'])) $this->description = $data['description'];
         if (isset($data['email'])) $this->email = $data['email'];
         if (isset($data['phone'])) $this->phone = $data['phone'];
-        if (isset($data['address'])) $this->address = $data['address'];
         if (isset($data['website'])) $this->website = $data['website'];
         if (isset($data['logo_url'])) $this->logo_url = $data['logo_url'];
         if (isset($data['is_active'])) $this->is_active = $data['is_active'];
@@ -64,7 +62,6 @@ class Organization {
             'description' => $this->description,
             'email' => $this->email,
             'phone' => $this->phone,
-            'address' => $this->address,
             'website' => $this->website,
             'logo_url' => $this->logo_url,
             'is_active' => $this->is_active,
@@ -166,10 +163,6 @@ class Organization {
         return $this->phone;
     }
 
-    public function getAddress() {
-        return $this->address;
-    }
-
     public function getWebsite() {
         return $this->website;
     }
@@ -250,10 +243,6 @@ class Organization {
 
     public function setPhone($phone) {
         $this->phone = $phone;
-    }
-
-    public function setAddress($address) {
-        $this->address = $address;
     }
 
     public function setWebsite($website) {

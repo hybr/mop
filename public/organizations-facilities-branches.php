@@ -70,7 +70,7 @@ include __DIR__ . '/../views/header.php';
             <input
                 type="text"
                 id="search-input"
-                placeholder="Search by name, city, or code..."
+                placeholder="Search by name or code..."
                 style="flex: 1; min-width: 250px; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px;"
                 onkeyup="filterTable()"
             >
@@ -125,7 +125,7 @@ include __DIR__ . '/../views/header.php';
                         <tr style="border-bottom: 2px solid var(--border-color); text-align: left;">
                             <th style="padding: 1rem;">Branch Name</th>
                             <th style="padding: 1rem;">Organization</th>
-                            <th style="padding: 1rem;">Location</th>
+                            <th style="padding: 1rem;">Type</th>
                             <th style="padding: 1rem;">Contact</th>
                             <th style="padding: 1rem;">Status</th>
                             <th style="padding: 1rem;">Created</th>
@@ -148,16 +148,15 @@ include __DIR__ . '/../views/header.php';
                                 </td>
                                 <td style="padding: 1rem;">
                                     <?php
-                                    $org = $orgRepo->findById($branch->getOrganizationId());
+                                    $org = $orgRepo->findById($branch->getOrganizationId(), $user->getId());
                                     echo $org ? htmlspecialchars($org->getName()) : 'Unknown';
                                     ?>
                                 </td>
                                 <td style="padding: 1rem;">
-                                    <?php if ($branch->getCity()): ?>
-                                        <div><?php echo htmlspecialchars($branch->getCity()); ?><?php echo $branch->getState() ? ', ' . htmlspecialchars($branch->getState()) : ''; ?></div>
-                                        <?php if ($branch->getCountry()): ?>
-                                            <small class="text-muted"><?php echo htmlspecialchars($branch->getCountry()); ?></small>
-                                        <?php endif; ?>
+                                    <?php if ($branch->getBranchType()): ?>
+                                        <span style="text-transform: capitalize;">
+                                            <?php echo htmlspecialchars(str_replace('_', ' ', $branch->getBranchType())); ?>
+                                        </span>
                                     <?php else: ?>
                                         <span class="text-muted">-</span>
                                     <?php endif; ?>
@@ -209,9 +208,9 @@ include __DIR__ . '/../views/header.php';
                                 <span style="color: var(--text-light); font-size: 0.9rem;">&#x2715; Inactive</span>
                             <?php endif; ?>
                         </div>
-                        <?php if ($branch->getCity()): ?>
-                            <div class="text-muted" style="margin-bottom: 0.5rem; font-size: 0.9rem;">
-                                &#128205; <?php echo htmlspecialchars($branch->getCity()); ?><?php echo $branch->getState() ? ', ' . htmlspecialchars($branch->getState()) : ''; ?>
+                        <?php if ($branch->getBranchType()): ?>
+                            <div class="text-muted" style="margin-bottom: 0.5rem; font-size: 0.9rem; text-transform: capitalize;">
+                                <?php echo htmlspecialchars(str_replace('_', ' ', $branch->getBranchType())); ?>
                             </div>
                         <?php endif; ?>
                         <div class="text-muted" style="font-size: 0.85rem; margin-bottom: 1rem;">
@@ -240,7 +239,7 @@ include __DIR__ . '/../views/header.php';
                     <thead>
                         <tr style="border-bottom: 2px solid var(--border-color); text-align: left;">
                             <th style="padding: 1rem;">Name</th>
-                            <th style="padding: 1rem;">Location</th>
+                            <th style="padding: 1rem;">Type</th>
                             <th style="padding: 1rem;">Deleted</th>
                             <th style="padding: 1rem;">Actions</th>
                         </tr>
@@ -252,7 +251,13 @@ include __DIR__ . '/../views/header.php';
                                     <strong><?php echo htmlspecialchars($branch->getName()); ?></strong>
                                 </td>
                                 <td style="padding: 1rem;">
-                                    <?php echo $branch->getCity() ? htmlspecialchars($branch->getCity()) : '-'; ?>
+                                    <?php if ($branch->getBranchType()): ?>
+                                        <span style="text-transform: capitalize;">
+                                            <?php echo htmlspecialchars(str_replace('_', ' ', $branch->getBranchType())); ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="text-muted">-</span>
+                                    <?php endif; ?>
                                 </td>
                                 <td style="padding: 1rem;">
                                     <?php echo date('M j, Y', strtotime($branch->getDeletedAt())); ?>

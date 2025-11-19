@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../src/includes/autoload.php';
 
 use App\Classes\Auth;
-use App\Classes\FacilityTeam;
+use App\Classes\DepartmentTeam;
 use App\Classes\FacilityTeamRepository;
 use App\Classes\OrganizationRepository;
 
@@ -16,7 +16,7 @@ $orgRepo = new OrganizationRepository();
 $errors = [];
 $success = false;
 $isEdit = false;
-$team = new FacilityTeam();
+$team = new DepartmentTeam();
 
 // Check if editing existing team
 if (isset($_GET['id'])) {
@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $team->setName($_POST['name'] ?? '');
         $team->setCode($_POST['code'] ?? '');
         $team->setDescription($_POST['description'] ?? '');
-        $team->setFacilityId($_POST['facility_id'] ?? null);
+        $team->setOrganizationDepartmentId($_POST['organization_department_id'] ?? null);
         $team->setOrganizationId($_POST['organization_id'] ?? null);
         $team->setParentTeamId($_POST['parent_team_id'] ?? null);
         $team->setIsActive(isset($_POST['is_active']) ? 1 : 0);

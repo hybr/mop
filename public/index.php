@@ -7,7 +7,7 @@ $auth = new Auth();
 
 // Redirect to dashboard if logged in
 if ($auth->isLoggedIn()) {
-    header('Location: /dashboard.php');
+    header('Location: /market/');
     exit;
 }
 
@@ -25,10 +25,10 @@ include __DIR__ . '/../views/header.php';
         </p>
 
         <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-            <a href="/register.php" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.125rem;">
+            <a href="/auth/register/" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.125rem;">
                 Get Started
             </a>
-            <a href="/login.php" class="btn btn-secondary" style="padding: 1rem 2rem; font-size: 1.125rem;">
+            <a href="/auth/login/" class="btn btn-secondary" style="padding: 1rem 2rem; font-size: 1.125rem;">
                 Login
             </a>
         </div>

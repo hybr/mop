@@ -216,8 +216,7 @@ $auth = new Auth();
 $result = $auth->login('user@example.com', 'password123');
 
 if ($result['success']) {
-    // Redirect to dashboard
-    header('Location: /dashboard.php');
+    header('Location: /market.php');
 }
 ```
 

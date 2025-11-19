@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['organization_id'])) {
         $auth->setCurrentOrganization($_POST['organization_id']);
 
         // Redirect to the intended page or dashboard
-        $redirect = $_GET['redirect'] ?? '/dashboard.php';
+        $redirect = $_GET['redirect'] ?? '/organizations.php';
         header('Location: ' . $redirect);
         exit;
     } catch (Exception $e) {
@@ -39,7 +39,7 @@ if (empty($organizations)) {
 // If user has only one organization, auto-select it
 if (count($organizations) === 1) {
     $auth->setCurrentOrganization($organizations[0]->getId());
-    $redirect = $_GET['redirect'] ?? '/dashboard.php';
+    $redirect = $_GET['redirect'] ?? '/organizations.php';
     header('Location: ' . $redirect);
     exit;
 }

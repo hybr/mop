@@ -9,7 +9,6 @@ CREATE TABLE IF NOT EXISTS organizations (
     description TEXT,
     email TEXT,
     phone TEXT,
-    address TEXT,
     website TEXT,
     logo_url TEXT,
     is_active INTEGER DEFAULT 1,

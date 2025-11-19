@@ -4,6 +4,7 @@ require_once __DIR__ . '/../src/includes/autoload.php';
 use App\Classes\Auth;
 use App\Classes\Organization;
 use App\Classes\OrganizationRepository;
+use App\Components\PhoneNumberField;
 
 $auth = new Auth();
 $auth->requireAuth();
@@ -15,6 +16,35 @@ $error = '';
 $success = '';
 $organization = null;
 $isEdit = false;
+
+// Legal structure options (ENUM values)
+$legalStructures = [
+    // India-specific types
+    'Private Limited' => 'Private Limited (India)',
+    'Public Limited Company (India)' => 'Public Limited Company (India)',
+    'Limited Liability Partnership (India)' => 'Limited Liability Partnership (LLP) (India)',
+    'One Person Company (OPC) (India)' => 'One Person Company (OPC) (India)',
+    'Section 8 Company (India)' => 'Section 8 Company (Non‑profit) (India)',
+    'Society (India)' => 'Society (India)',
+    'Cooperative Society (India)' => 'Cooperative Society (India)',
+    'Proprietorship (India)' => 'Proprietorship (India)',
+    'Sansthan (India)' => 'Sansthan (India)',
+    'Trust (India)' => 'Trust (India)',
+
+    // USA-specific types
+    'Limited Liability Company (LLc) (USA)' => 'Limited Liability Company (LLc) (USA)',
+    'C Corporation (USA)' => 'C Corporation (Inc.) (USA)',
+    'S Corporation (USA)' => 'S Corporation (USA)',
+    'Limited Partnership (LP) (USA)' => 'Limited Partnership (LP) (USA)',
+    'Limited Liability Partnership (USA)' => 'Limited Liability Partnership (LLP) (USA)',
+    'Professional Corporation (PC) (USA)' => 'Professional Corporation (PC) (USA)',
+    'Nonprofit Corporation (USA)' => 'Nonprofit Corporation (USA)',
+    'Benefit Corporation (B Corp) (USA)' => 'Benefit Corporation (B Corp) (USA)',
+    'Inc.' => 'Inc. (USA)',
+
+    'Ltd.' => 'Ltd. (UK)',
+    'GmbH' => 'GmbH (Germany)'
+];
 
 // Check if editing existing organization
 if (isset($_GET['id'])) {
@@ -39,8 +69,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $organization->setSubdomain($_POST['subdomain'] ?? '');
         $organization->setDescription($_POST['description'] ?? '');
         $organization->setEmail($_POST['email'] ?? '');
-        $organization->setPhone($_POST['phone'] ?? '');
-        $organization->setAddress($_POST['address'] ?? '');
+
+        // Combine country code and phone number
+        $phone = PhoneNumberField::combine(
+            $_POST['country_code'] ?? '',
+            $_POST['phone_number'] ?? ''
+        );
+        $organization->setPhone($phone);
+
         $organization->setWebsite($_POST['website'] ?? '');
         $organization->setIsActive(isset($_POST['is_active']) ? 1 : 0);
 
@@ -101,15 +137,12 @@ include __DIR__ . '/../views/header.php';
                     <label for="legal_structure" class="form-label">Legal Structure</label>
                     <select id="legal_structure" name="legal_structure" class="form-input">
                         <option value="">Select...</option>
-                        <option value="Private Limited" <?php echo ($organization && $organization->getLegalStructure() === 'Private Limited') ? 'selected' : ''; ?>>Private Limited (India)</option>
-                        <option value="LLC" <?php echo ($organization && $organization->getLegalStructure() === 'LLC') ? 'selected' : ''; ?>>LLC (USA)</option>
-                        <option value="Inc." <?php echo ($organization && $organization->getLegalStructure() === 'Inc.') ? 'selected' : ''; ?>>Inc. (USA)</option>
-                        <option value="Ltd." <?php echo ($organization && $organization->getLegalStructure() === 'Ltd.') ? 'selected' : ''; ?>>Ltd. (UK)</option>
-                        <option value="GmbH" <?php echo ($organization && $organization->getLegalStructure() === 'GmbH') ? 'selected' : ''; ?>>GmbH (Germany)</option>
-                        <option value="Proprietorship" <?php echo ($organization && $organization->getLegalStructure() === 'Proprietorship') ? 'selected' : ''; ?>>Proprietorship</option>
-                        <option value="Partnership" <?php echo ($organization && $organization->getLegalStructure() === 'Partnership') ? 'selected' : ''; ?>>Partnership</option>
-                        <option value="NGO" <?php echo ($organization && $organization->getLegalStructure() === 'NGO') ? 'selected' : ''; ?>>NGO</option>
-                        <option value="Trust" <?php echo ($organization && $organization->getLegalStructure() === 'Trust') ? 'selected' : ''; ?>>Trust</option>
+                        <?php foreach ($legalStructures as $value => $label): ?>
+                            <option value="<?php echo htmlspecialchars($value); ?>"
+                                <?php echo ($organization && $organization->getLegalStructure() === $value) ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($label); ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
                     <small class="text-muted text-small">
                         Full name will be: Short Name + Legal Structure
@@ -165,28 +198,11 @@ include __DIR__ . '/../views/header.php';
                     >
                 </div>
 
-                <div class="form-group">
-                    <label for="phone" class="form-label">Phone</label>
-                    <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        class="form-input"
-                        value="<?php echo $organization ? htmlspecialchars($organization->getPhone() ?? '') : ''; ?>"
-                        placeholder="+1 (555) 123-4567"
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="address" class="form-label">Address</label>
-                    <textarea
-                        id="address"
-                        name="address"
-                        class="form-input"
-                        rows="3"
-                        placeholder="123 Main St, City, State ZIP"
-                    ><?php echo $organization ? htmlspecialchars($organization->getAddress() ?? '') : ''; ?></textarea>
-                </div>
+                <?php echo PhoneNumberField::render([
+                    'label' => 'Phone',
+                    'value' => $organization ? $organization->getPhone() : '',
+                    'help_text' => 'Organization contact phone number'
+                ]); ?>
 
                 <div class="form-group">
                     <label for="website" class="form-label">Website</label>
