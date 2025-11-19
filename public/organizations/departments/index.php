@@ -40,6 +40,26 @@ include __DIR__ . '/../../../views/header.php';
         </div>
     <?php endif; ?>
 
+    <!-- Facilities Management Quick Access -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <h2 class="card-title">Facilities Management</h2>
+        <p class="text-muted" style="margin-bottom: 1rem;">Quick access to facility management sections</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <a href="/organizations/departments/facilities/teams/" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
+                Teams
+            </a>
+            <a href="/organizations/departments/facilities/branches/" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
+                Branches
+            </a>
+            <a href="/organizations/departments/facilities/branches/buildings" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
+                Buildings
+            </a>
+            <button class="btn btn-secondary" style="padding: 1rem; opacity: 0.6;" disabled title="Coming soon">
+                Workstations
+            </button>
+        </div>
+    </div>
+
     <!-- Active Departments -->
     <div class="card">
         <h2 class="card-title">Active Departments (<?php echo count($departments); ?>)</h2>

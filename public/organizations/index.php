@@ -59,17 +59,14 @@ include __DIR__ . '/../../views/header.php';
         <h2 class="card-title">Department Dashboards</h2>
         <p class="text-muted" style="margin-bottom: 1rem;">Manage different aspects of your organizations</p>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-            <a href="/organizations/facilities/teams/teams/" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
-                Facilities
-            </a>
             <a href="/organizations/departments/" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
                 Departments
             </a>
             <a href="/organizations/" class="btn btn-secondary" style="padding: 1rem; text-align: center; opacity: 0.6;" title="Coming soon">
-                Human Resources
+                Workers
             </a>
             <a href="/organizations/" class="btn btn-secondary" style="padding: 1rem; text-align: center; opacity: 0.6;" title="Coming soon">
-                Finance
+                Customers
             </a>
         </div>
     </div>

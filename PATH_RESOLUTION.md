@@ -36,9 +36,16 @@ include __DIR__ . '/../../../../views/header.php';
 
 #### 4 Levels Deep (public/folder/subfolder/subsubfolder/page/)
 ```php
-// Example: public/organizations/facilities/branches/form/index.php
+// Example: public/organizations/departments/facilities/branches/index.php
 require_once __DIR__ . '/../../../../../src/includes/autoload.php';
 include __DIR__ . '/../../../../../views/header.php';
+```
+
+#### 5 Levels Deep (public/folder/subfolder/subsubfolder/page/subpage/)
+```php
+// Example: public/organizations/departments/facilities/branches/form/index.php
+require_once __DIR__ . '/../../../../../../src/includes/autoload.php';
+include __DIR__ . '/../../../../../../views/header.php';
 ```
 
 ## Quick Reference Table
@@ -49,7 +56,8 @@ include __DIR__ . '/../../../../../views/header.php';
 | 1 | `../../` | `__DIR__ . '/../../src/'` | `public/market/` |
 | 2 | `../../../` | `__DIR__ . '/../../../src/'` | `public/auth/login/` |
 | 3 | `../../../../` | `__DIR__ . '/../../../../src/'` | `public/organizations/departments/form/` |
-| 4 | `../../../../../` | `__DIR__ . '/../../../../../src/'` | `public/organizations/facilities/branches/form/` |
+| 4 | `../../../../../` | `__DIR__ . '/../../../../../src/'` | `public/organizations/departments/facilities/branches/` |
+| 5 | `../../../../../../` | `__DIR__ . '/../../../../../../src/'` | `public/organizations/departments/facilities/branches/form/` |
 
 ## Files Affected
 
@@ -78,16 +86,18 @@ include __DIR__ . '/../../../../../views/header.php';
 - `/organizations/departments/view/index.php`
 - `/organizations/departments/delete/index.php`
 - `/organizations/departments/restore/index.php`
-- `/organizations/facilities/branches/index.php`
-- `/organizations/facilities/teams/index.php`
 
 ### Depth 4 (5 levels up)
-- `/organizations/facilities/branches/form/index.php`
-- `/organizations/facilities/branches/delete/index.php`
-- `/organizations/facilities/branches/restore/index.php`
-- `/organizations/facilities/teams/form/index.php`
-- `/organizations/facilities/teams/delete/index.php`
-- `/organizations/facilities/teams/restore/index.php`
+- `/organizations/departments/facilities/branches/index.php`
+- `/organizations/departments/facilities/teams/index.php`
+
+### Depth 5 (6 levels up)
+- `/organizations/departments/facilities/branches/form/index.php`
+- `/organizations/departments/facilities/branches/delete/index.php`
+- `/organizations/departments/facilities/branches/restore/index.php`
+- `/organizations/departments/facilities/teams/form/index.php`
+- `/organizations/departments/facilities/teams/delete/index.php`
+- `/organizations/departments/facilities/teams/restore/index.php`
 
 ## Verification Commands
 
@@ -99,7 +109,8 @@ find public/auth public/organizations public/dashboard public/profile public/mar
 grep "require_once __DIR__" public/market/index.php
 grep "require_once __DIR__" public/auth/login/index.php
 grep "require_once __DIR__" public/organizations/departments/form/index.php
-grep "require_once __DIR__" public/organizations/facilities/branches/form/index.php
+grep "require_once __DIR__" public/organizations/departments/facilities/branches/index.php
+grep "require_once __DIR__" public/organizations/departments/facilities/branches/form/index.php
 ```
 
 ## Fixed Issues

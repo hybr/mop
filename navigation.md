@@ -48,7 +48,7 @@ Page-Level Navigation Structure
 
         Shows department dashboards for quick access.
 
-    /organizations/facilities
+    /organizations/departments/facilities
 
         Facilities management dashboard. Also manages the other departments under Facility.
 
@@ -63,7 +63,7 @@ Page-Level Navigation Structure
 
             and Other Departments in the Facility Department
 
-    /organizations-facilities-branches
+    /organizations/departments/facilities/branches
 
         Branch management dashboard.
 
@@ -77,10 +77,9 @@ Page-Level Navigation Structure
 
             Delete
 
-    /organizations-facilities-branches-buildings
+    /organizations/departments/facilities/branches/buildings
 
         One organization branch may have more than one buildings. One building is must. 
-        This entity is called from /organizations-facilities.php
         Building has postal address and geo cordinates and are must to enter. 
         Provide a buttton at address, so when clicked it updates the correct geo cordinates.
         Displays list of branche buildings with options to:

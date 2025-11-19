@@ -44,23 +44,23 @@ The application now uses folder-based URLs with `index.php` files for better SEO
 ### Branches
 | Old URL | New URL | Description |
 |---------|---------|-------------|
-| `/organizations-facilities-branches.php` | `/organizations/facilities/branches/` | Branches list |
-| `/branch-form.php` | `/organizations/facilities/branches/form/` | Create/Edit branch |
-| `/branch-delete.php` | `/organizations/facilities/branches/delete/` | Delete branch |
-| `/branch-restore.php` | `/organizations/facilities/branches/restore/` | Restore branch |
+| `/organizations-facilities-branches.php` | `/organizations/departments/facilities/branches/` | Branches list |
+| `/branch-form.php` | `/organizations/departments/facilities/branches/form/` | Create/Edit branch |
+| `/branch-delete.php` | `/organizations/departments/facilities/branches/delete/` | Delete branch |
+| `/branch-restore.php` | `/organizations/departments/facilities/branches/restore/` | Restore branch |
 
 ### Teams
 | Old URL | New URL | Description |
 |---------|---------|-------------|
-| `/organizations-facilities.php` | `/organizations/facilities/teams/` | Teams list |
-| `/facility-team-form.php` | `/organizations/facilities/teams/form/` | Create/Edit team |
-| `/facility-team-delete.php` | `/organizations/facilities/teams/delete/` | Delete team |
-| `/facility-team-restore.php` | `/organizations/facilities/teams/restore/` | Restore team |
+| `/organizations-facilities.php` | `/organizations/departments/facilities/teams/` | Teams list |
+| `/facility-team-form.php` | `/organizations/departments/facilities/teams/form/` | Create/Edit team |
+| `/facility-team-delete.php` | `/organizations/departments/facilities/teams/delete/` | Delete team |
+| `/facility-team-restore.php` | `/organizations/departments/facilities/teams/restore/` | Restore team |
 
 ## Benefits
 
 ### SEO Benefits
-1. **Cleaner URLs** - `/organizations/facilities/branches/` instead of `/organizations-facilities-branches.php`
+1. **Cleaner URLs** - `/organizations/departments/facilities/branches/` instead of `/organizations-facilities-branches.php`
 2. **Better Hierarchy** - Clear content structure visible in URL
 3. **No File Extensions** - More professional and flexible
 4. **Keyword-Rich** - Better for search engine indexing
@@ -93,23 +93,23 @@ public/
     ├── delete/index.php
     ├── restore/index.php
     ├── directory/index.php
-    ├── departments/
-    │   ├── index.php
-    │   ├── form/index.php
-    │   ├── view/index.php
-    │   ├── delete/index.php
-    │   └── restore/index.php
-    └── facilities/
-        ├── branches/
-        │   ├── index.php
-        │   ├── form/index.php
-        │   ├── delete/index.php
-        │   └── restore/index.php
-        └── teams/
-            ├── index.php
-            ├── form/index.php
-            ├── delete/index.php
-            └── restore/index.php
+    └── departments/
+        ├── index.php
+        ├── form/index.php
+        ├── view/index.php
+        ├── delete/index.php
+        ├── restore/index.php
+        └── facilities/
+            ├── branches/
+            │   ├── index.php
+            │   ├── form/index.php
+            │   ├── delete/index.php
+            │   └── restore/index.php
+            └── teams/
+                ├── index.php
+                ├── form/index.php
+                ├── delete/index.php
+                └── restore/index.php
 ```
 
 ## Example URLs in Action
@@ -123,8 +123,8 @@ https://example.com/login.php
 
 ### After (New)
 ```
-https://example.com/organizations/facilities/branches/
-https://example.com/organizations/facilities/branches/form/?id=123
+https://example.com/organizations/departments/facilities/branches/
+https://example.com/organizations/departments/facilities/branches/form/?id=123
 https://example.com/auth/login/
 ```
 

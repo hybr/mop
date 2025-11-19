@@ -17,10 +17,6 @@ AddDefaultCharset UTF-8
 # RewriteCond %{HTTPS} off
 # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# Handle nested organization routes (must come before general rules)
-RewriteRule ^organizations/facilities/branches/?$ organizations-facilities-branches.php [L,QSA]
-RewriteRule ^organizations/facilities/?$ organizations-facilities.php [L,QSA]
-
 # Remove .php extension from URLs
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}\.php -f

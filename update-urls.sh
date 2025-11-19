@@ -24,17 +24,17 @@ for file in $FILES; do
     sed -i 's|/organization-department-restore\.php|/organizations/departments/restore/|g' "$file"
 
     # Branches
-    sed -i 's|/organizations-facilities-branches\.php|/organizations/facilities/branches/|g' "$file"
-    sed -i 's|/branch-form\.php|/organizations/facilities/branches/form/|g' "$file"
-    sed -i 's|/branch-delete\.php|/organizations/facilities/branches/delete/|g' "$file"
-    sed -i 's|/branch-restore\.php|/organizations/facilities/branches/restore/|g' "$file"
+    sed -i 's|/organizations-facilities-branches\.php|/organizations/departments/facilities/branches/|g' "$file"
+    sed -i 's|/branch-form\.php|/organizations/departments/facilities/branches/form/|g' "$file"
+    sed -i 's|/branch-delete\.php|/organizations/departments/facilities/branches/delete/|g' "$file"
+    sed -i 's|/branch-restore\.php|/organizations/departments/facilities/branches/restore/|g' "$file"
 
     # Teams
-    sed -i 's|/organizations-facilities\.php|/organizations/facilities/teams/|g' "$file"
-    sed -i 's|/organizations/facilities|/organizations/facilities/teams|g' "$file"
-    sed -i 's|/facility-team-form\.php|/organizations/facilities/teams/form/|g' "$file"
-    sed -i 's|/facility-team-delete\.php|/organizations/facilities/teams/delete/|g' "$file"
-    sed -i 's|/facility-team-restore\.php|/organizations/facilities/teams/restore/|g' "$file"
+    sed -i 's|/organizations-facilities\.php|/organizations/departments/facilities/teams/|g' "$file"
+    sed -i 's|/organizations/departments/facilities|/organizations/departments/facilities/teams|g' "$file"
+    sed -i 's|/facility-team-form\.php|/organizations/departments/facilities/teams/form/|g' "$file"
+    sed -i 's|/facility-team-delete\.php|/organizations/departments/facilities/teams/delete/|g' "$file"
+    sed -i 's|/facility-team-restore\.php|/organizations/departments/facilities/teams/restore/|g' "$file"
 
     # Auth
     sed -i 's|/login\.php|/auth/login/|g' "$file"
