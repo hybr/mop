@@ -172,24 +172,10 @@ include __DIR__ . '/../../../../../../../views/header.php';
             <div style="margin-bottom: 2rem;">
                 <h2 class="card-title">Basic Information</h2>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-                    <!-- Organization -->
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                            Organization <span style="color: var(--danger-color);">*</span>
-                        </label>
-                        <select name="organization_id" id="organization_id" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px;">
-                            <option value="">Select Organization</option>
-                            <?php foreach ($organizations as $org): ?>
-                                <option value="<?php echo htmlspecialchars($org->getId()); ?>"
-                                    <?php echo $org->getId() === $selectedOrgId ? 'selected' : ''; ?>>
-                                    <?php echo htmlspecialchars($org->getFullName()); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <small class="text-muted">Select the organization this building belongs to</small>
-                    </div>
+                <!-- Hidden organization_id field - will be populated from selected branch -->
+                <input type="hidden" name="organization_id" id="organization_id" value="<?php echo htmlspecialchars($selectedOrgId); ?>">
 
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
                     <!-- Branch -->
                     <div>
                         <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
@@ -408,37 +394,22 @@ include __DIR__ . '/../../../../../../../views/header.php';
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Filter branches by selected organization
-    const orgSelect = document.getElementById('organization_id');
+    // Auto-populate organization_id from selected branch
+    const orgIdInput = document.getElementById('organization_id');
     const branchSelect = document.getElementById('branch_id');
 
-    function filterBranches() {
-        const selectedOrg = orgSelect.value;
-        const branchOptions = branchSelect.querySelectorAll('option');
-
-        branchOptions.forEach(option => {
-            if (option.value === '') {
-                option.style.display = '';
-                return;
-            }
-
-            const optionOrg = option.getAttribute('data-org');
-            if (!selectedOrg || optionOrg === selectedOrg) {
-                option.style.display = '';
-            } else {
-                option.style.display = 'none';
-            }
-        });
-
-        // Reset branch selection if it doesn't match the selected org
+    function updateOrganizationFromBranch() {
         const selectedBranchOption = branchSelect.options[branchSelect.selectedIndex];
-        if (selectedBranchOption && selectedBranchOption.getAttribute('data-org') !== selectedOrg) {
-            branchSelect.value = '';
+        if (selectedBranchOption && selectedBranchOption.value) {
+            const orgId = selectedBranchOption.getAttribute('data-org');
+            orgIdInput.value = orgId || '';
+        } else {
+            orgIdInput.value = '';
         }
     }
 
-    orgSelect.addEventListener('change', filterBranches);
-    filterBranches(); // Run on page load
+    branchSelect.addEventListener('change', updateOrganizationFromBranch);
+    updateOrganizationFromBranch(); // Run on page load to set initial value
 });
 </script>
 

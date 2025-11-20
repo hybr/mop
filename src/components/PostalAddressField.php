@@ -348,7 +348,7 @@ class PostalAddressField {
             $html .= '            statusDiv.textContent = `✓ Coordinates updated: ${lat.toFixed(6)}, ${lon.toFixed(6)}`;' . "\n";
             $html .= '        } else {' . "\n";
             $html .= '            statusDiv.style.color = "#ff9800";' . "\n";
-            $html .= '            statusDiv.textContent = "⚠ Could not find coordinates for this address. Please enter them manually.";' . "\n";
+            $html .= '            statusDiv.textContent = `⚠ Could not find coordinates for: "${fullAddress}". Please enter them manually.`;' . "\n";
             $html .= '        }' . "\n";
             $html .= '    })' . "\n";
             $html .= '    .catch(error => {' . "\n";
