@@ -8,7 +8,7 @@ The application now uses folder-based URLs with `index.php` files for better SEO
 ### Authentication
 | Old URL | New URL | Description |
 |---------|---------|-------------|
-| `/login.php` | `/auth/login/` | User login |
+| `/auth/login` | `/auth/login/` | User login |
 | `/logout.php` | `/auth/logout/` | User logout |
 | `/register.php` | `/auth/register/` | User registration |
 | `/forgot-password.php` | `/auth/forgot-password/` | Password recovery |
@@ -19,7 +19,7 @@ The application now uses folder-based URLs with `index.php` files for better SEO
 |---------|---------|-------------|
 | `/dashboard.php` | `/dashboard/` | User dashboard |
 | `/profile.php` | `/profile/` | User profile |
-| `/market.php` | `/market/` | Market page |
+| `/market` | `/market/` | Market page |
 
 ### Organizations
 | Old URL | New URL | Description |
@@ -118,7 +118,7 @@ public/
 ```
 https://example.com/organizations-facilities-branches.php
 https://example.com/branch-form.php?id=123
-https://example.com/login.php
+https://example.com/auth/login
 ```
 
 ### After (New)

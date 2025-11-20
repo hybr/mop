@@ -17,7 +17,6 @@ class OrganizationBuilding {
     private $description;
 
     // Address fields (required per navigation.md)
-    private $postal_address;
     private $street_address;
     private $city;
     private $state;
@@ -65,7 +64,6 @@ class OrganizationBuilding {
         if (isset($data['code'])) $this->code = $data['code'];
         if (isset($data['description'])) $this->description = $data['description'];
 
-        if (isset($data['postal_address'])) $this->postal_address = $data['postal_address'];
         if (isset($data['street_address'])) $this->street_address = $data['street_address'];
         if (isset($data['city'])) $this->city = $data['city'];
         if (isset($data['state'])) $this->state = $data['state'];
@@ -102,7 +100,6 @@ class OrganizationBuilding {
             'name' => $this->name,
             'code' => $this->code,
             'description' => $this->description,
-            'postal_address' => $this->postal_address,
             'street_address' => $this->street_address,
             'city' => $this->city,
             'state' => $this->state,
@@ -178,11 +175,6 @@ class OrganizationBuilding {
             $errors[] = "Organization is required";
         }
 
-        // Address validation (required per navigation.md)
-        if (empty($this->postal_address)) {
-            $errors[] = "Postal address is required";
-        }
-
         // Geo coordinates validation (required per navigation.md)
         if (empty($this->latitude)) {
             $errors[] = "Latitude is required";
@@ -246,7 +238,6 @@ class OrganizationBuilding {
     public function getName() { return $this->name; }
     public function getCode() { return $this->code; }
     public function getDescription() { return $this->description; }
-    public function getPostalAddress() { return $this->postal_address; }
     public function getStreetAddress() { return $this->street_address; }
     public function getCity() { return $this->city; }
     public function getState() { return $this->state; }
@@ -278,7 +269,6 @@ class OrganizationBuilding {
     public function setName($name) { $this->name = $name; }
     public function setCode($code) { $this->code = $code; }
     public function setDescription($description) { $this->description = $description; }
-    public function setPostalAddress($postal_address) { $this->postal_address = $postal_address; }
     public function setStreetAddress($street_address) { $this->street_address = $street_address; }
     public function setCity($city) { $this->city = $city; }
     public function setState($state) { $this->state = $state; }

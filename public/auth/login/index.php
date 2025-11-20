@@ -7,7 +7,7 @@ $auth = new Auth();
 
 // Redirect if already logged in
 if ($auth->isLoggedIn()) {
-    header('Location: /market.php');
+    header('Location: /market');
     exit;
 }
 
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $auth->autoSelectOrganization();
 
         // Redirect to dashboard on successful login
-        header('Location: /market.php');
+        header('Location: /market');
         exit;
 
     } catch (Exception $e) {
@@ -43,7 +43,7 @@ include __DIR__ . '/../../../views/header.php';
         <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
     <?php endif; ?>
 
-    <form method="POST" action="/login.php">
+    <form method="POST" action="/auth/login">
         <div class="form-group">
             <label for="identifier" class="form-label">Username, Email, or Phone</label>
             <input

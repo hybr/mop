@@ -216,7 +216,7 @@ $auth = new Auth();
 $result = $auth->login('user@example.com', 'password123');
 
 if ($result['success']) {
-    header('Location: /market.php');
+    header('Location: /market');
 }
 ```
 

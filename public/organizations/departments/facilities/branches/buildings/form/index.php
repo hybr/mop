@@ -7,6 +7,7 @@ use App\Classes\OrganizationBuildingRepository;
 use App\Classes\OrganizationRepository;
 use App\Classes\OrganizationBranchRepository;
 use App\Components\PhoneNumberField;
+use App\Components\PostalAddressField;
 
 $auth = new Auth();
 $auth->requireAuth();
@@ -63,12 +64,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $building->setOrganizationId($_POST['organization_id'] ?? '');
 
         // Address fields
-        $building->setPostalAddress($_POST['postal_address'] ?? '');
         $building->setStreetAddress($_POST['street_address'] ?? '');
         $building->setCity($_POST['city'] ?? '');
         $building->setState($_POST['state'] ?? '');
         $building->setPostalCode($_POST['postal_code'] ?? '');
-        $building->setCountry($_POST['country'] ?? 'India');
+        $building->setCountry($_POST['country'] ?? '');
 
         // Geo coordinates (required)
         $building->setLatitude($_POST['latitude'] ?? '');
@@ -249,104 +249,19 @@ include __DIR__ . '/../../../../../../../views/header.php';
                 <h2 class="card-title">Address & Location</h2>
                 <p class="text-muted" style="margin-bottom: 1rem;">All address fields and geo-coordinates are required</p>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-                    <!-- Postal Address -->
-                    <div style="grid-column: 1 / -1;">
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                            Postal Address <span style="color: var(--danger-color);">*</span>
-                        </label>
-                        <textarea name="postal_address" rows="2" required
-                                  placeholder="Complete postal address..."
-                                  style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px;"><?php echo htmlspecialchars($building->getPostalAddress() ?? ''); ?></textarea>
-                        <small class="text-muted">Full postal address for correspondence</small>
-                    </div>
-
-                    <!-- Street Address -->
-                    <div style="grid-column: 1 / -1;">
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                            Street Address
-                        </label>
-                        <input type="text" name="street_address"
-                               value="<?php echo htmlspecialchars($building->getStreetAddress() ?? ''); ?>"
-                               placeholder="Street address, building number"
-                               style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px;">
-                    </div>
-
-                    <!-- City -->
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                            City
-                        </label>
-                        <input type="text" name="city"
-                               value="<?php echo htmlspecialchars($building->getCity() ?? ''); ?>"
-                               placeholder="e.g., Mumbai"
-                               style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px;">
-                    </div>
-
-                    <!-- State -->
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                            State/Province
-                        </label>
-                        <input type="text" name="state"
-                               value="<?php echo htmlspecialchars($building->getState() ?? ''); ?>"
-                               placeholder="e.g., Maharashtra"
-                               style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px;">
-                    </div>
-
-                    <!-- Postal Code -->
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                            Postal Code
-                        </label>
-                        <input type="text" name="postal_code"
-                               value="<?php echo htmlspecialchars($building->getPostalCode() ?? ''); ?>"
-                               placeholder="e.g., 400001"
-                               style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px;">
-                    </div>
-
-                    <!-- Country -->
-                    <div>
-                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                            Country
-                        </label>
-                        <input type="text" name="country"
-                               value="<?php echo htmlspecialchars($building->getCountry() ?? 'India'); ?>"
-                               placeholder="India"
-                               style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px;">
-                    </div>
-                </div>
-
-                <!-- Geo Coordinates -->
-                <div style="margin-top: 1.5rem; padding: 1rem; background-color: var(--bg-light); border-radius: 4px;">
-                    <h3 style="margin-bottom: 1rem;">Geo Coordinates <span style="color: var(--danger-color);">*</span></h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
-                        <div>
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                                Latitude <span style="color: var(--danger-color);">*</span>
-                            </label>
-                            <input type="number" step="any" name="latitude" id="latitude" required
-                                   value="<?php echo htmlspecialchars($building->getLatitude() ?? ''); ?>"
-                                   placeholder="e.g., 19.0760"
-                                   style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px;">
-                        </div>
-                        <div>
-                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                                Longitude <span style="color: var(--danger-color);">*</span>
-                            </label>
-                            <input type="number" step="any" name="longitude" id="longitude" required
-                                   value="<?php echo htmlspecialchars($building->getLongitude() ?? ''); ?>"
-                                   placeholder="e.g., 72.8777"
-                                   style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px;">
-                        </div>
-                    </div>
-                    <button type="button" id="get-coordinates-btn" class="btn btn-secondary">
-                        📍 Get Coordinates from Address
-                    </button>
-                    <small class="text-muted" style="display: block; margin-top: 0.5rem;">
-                        Click to automatically fetch coordinates based on the postal address
-                    </small>
-                </div>
+                <?php echo PostalAddressField::render([
+                    'label' => 'Building Address',
+                    'id_prefix' => 'building_',
+                    'street_address_value' => $building->getStreetAddress() ?? '',
+                    'city_value' => $building->getCity() ?? '',
+                    'state_value' => $building->getState() ?? '',
+                    'postal_code_value' => $building->getPostalCode() ?? '',
+                    'country_value' => $building->getCountry() ?? '',
+                    'latitude_value' => $building->getLatitude() ?? '',
+                    'longitude_value' => $building->getLongitude() ?? '',
+                    'required' => true,
+                    'help_text' => 'Enter the complete building address with geographic coordinates'
+                ]); ?>
             </div>
 
             <!-- Contact Information -->
@@ -524,51 +439,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     orgSelect.addEventListener('change', filterBranches);
     filterBranches(); // Run on page load
-
-    // Get Coordinates button functionality
-    const getCoordsBtn = document.getElementById('get-coordinates-btn');
-    const latInput = document.getElementById('latitude');
-    const lngInput = document.getElementById('longitude');
-
-    getCoordsBtn.addEventListener('click', async function() {
-        const postalAddress = document.querySelector('[name="postal_address"]').value;
-        const city = document.querySelector('[name="city"]').value;
-        const state = document.querySelector('[name="state"]').value;
-        const country = document.querySelector('[name="country"]').value;
-
-        if (!postalAddress && !city) {
-            alert('Please enter at least a postal address or city to get coordinates');
-            return;
-        }
-
-        // Build full address
-        const fullAddress = [postalAddress, city, state, country].filter(Boolean).join(', ');
-
-        getCoordsBtn.disabled = true;
-        getCoordsBtn.textContent = '🔄 Fetching coordinates...';
-
-        try {
-            // Using Nominatim OpenStreetMap API (free, no API key required)
-            const response = await fetch(
-                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}`
-            );
-            const data = await response.json();
-
-            if (data && data.length > 0) {
-                latInput.value = parseFloat(data[0].lat).toFixed(6);
-                lngInput.value = parseFloat(data[0].lon).toFixed(6);
-                alert('✓ Coordinates updated successfully!');
-            } else {
-                alert('Could not find coordinates for this address. Please enter them manually.');
-            }
-        } catch (error) {
-            console.error('Error fetching coordinates:', error);
-            alert('Error fetching coordinates. Please enter them manually.');
-        } finally {
-            getCoordsBtn.disabled = false;
-            getCoordsBtn.textContent = '📍 Get Coordinates from Address';
-        }
-    });
 });
 </script>
 

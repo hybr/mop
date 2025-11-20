@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 Replace the form section with:
 
 ```php
-<form method="POST" action="/login.php">
+<form method="POST" action="/auth/login">
     <div class="form-group">
         <label for="identifier" class="form-label">Username, Email, or Phone</label>
         <input
@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = $auth->login($identifier, $password);
 
         // Redirect to dashboard on successful login
-        header('Location: /market.php');
+        header('Location: /market');
         exit;
 
     } catch (Exception $e) {

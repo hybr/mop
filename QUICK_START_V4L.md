@@ -21,7 +21,7 @@ No manual setup needed!
    - Password
 
 ### 4. Create Your First Organization
-1. Login at: http://localhost:8000/login.php
+1. Login at: http://localhost:8000/auth/login
 2. Navigate to Organizations
 3. Click "New Organization"
 4. Fill in:

@@ -43,7 +43,7 @@ include __DIR__ . '/../../../views/header.php';
     <?php if ($success): ?>
         <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
         <p class="text-center mt-3">
-            <a href="/login.php" class="link">Back to Login</a>
+            <a href="/auth/login" class="link">Back to Login</a>
         </p>
     <?php else: ?>
         <form method="POST" action="/forgot-password.php">
@@ -64,7 +64,7 @@ include __DIR__ . '/../../../views/header.php';
         </form>
 
         <p class="text-center mt-3">
-            <a href="/login.php" class="link">Back to Login</a>
+            <a href="/auth/login" class="link">Back to Login</a>
         </p>
     <?php endif; ?>
 </div>

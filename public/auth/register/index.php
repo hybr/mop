@@ -63,7 +63,7 @@ include __DIR__ . '/../../../views/header.php';
     <?php if ($success): ?>
         <div class="alert alert-success"><?php echo htmlspecialchars($success); ?></div>
         <p class="text-center mt-3">
-            <a href="/login.php" class="link">Click here to login</a>
+            <a href="/auth/login" class="link">Click here to login</a>
         </p>
     <?php else: ?>
         <form method="POST" action="/register.php">
@@ -152,7 +152,7 @@ include __DIR__ . '/../../../views/header.php';
         </form>
 
         <p class="text-center mt-3">
-            Already have an account? <a href="/login.php" class="link">Login here</a>
+            Already have an account? <a href="/auth/login" class="link">Login here</a>
         </p>
     <?php endif; ?>
 </div>
