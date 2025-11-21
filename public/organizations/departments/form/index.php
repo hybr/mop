@@ -4,12 +4,15 @@ require_once __DIR__ . '/../../../../src/includes/autoload.php';
 use App\Classes\Auth;
 use App\Classes\OrganizationDepartment;
 use App\Classes\OrganizationDepartmentRepository;
+use App\Classes\OrganizationRepository;
+use App\Components\OrganizationField;
 
 $auth = new Auth();
 $auth->requireAuth();
 
 $user = $auth->getCurrentUser();
 $deptRepo = new OrganizationDepartmentRepository();
+$orgRepo = new OrganizationRepository();
 
 $error = '';
 $success = '';
@@ -72,6 +75,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Get all departments for parent dropdown
 $allDepartments = $deptRepo->findAll(1000);
+
+// Get organization if organization_id is set
+$organization = null;
+if ($department && $department->getOrganizationId()) {
+    $organization = $orgRepo->findById($department->getOrganizationId(), $user->getId());
+}
 
 $pageTitle = $isEdit ? 'Edit Department' : 'New Department';
 include __DIR__ . '/../../../../views/header.php';
@@ -161,16 +170,27 @@ include __DIR__ . '/../../../../views/header.php';
                     </div>
 
                     <div class="form-group">
-                        <label for="organization_id" class="form-label">Specific Organization</label>
-                        <input
-                            type="text"
-                            id="organization_id"
-                            name="organization_id"
-                            class="form-input"
-                            value="<?php echo $department ? htmlspecialchars($department->getOrganizationId() ?? '') : ''; ?>"
-                            placeholder="Leave empty for all organizations"
-                        >
-                        <small class="text-muted">Optional: Leave empty to make this department available to all organizations</small>
+                        <?php if ($department && $department->getOrganizationId() && $organization): ?>
+                            <?php echo OrganizationField::render([
+                                'label' => 'Specific Organization',
+                                'name' => 'organization_id',
+                                'organization_id' => $organization->getId(),
+                                'organization_name' => $organization->getFullName(),
+                                'required' => false,
+                                'help_text' => 'This department is assigned to this organization'
+                            ]); ?>
+                        <?php else: ?>
+                            <label for="organization_id" class="form-label">Specific Organization</label>
+                            <input
+                                type="text"
+                                id="organization_id"
+                                name="organization_id"
+                                class="form-input"
+                                value=""
+                                placeholder="Leave empty for all organizations"
+                            >
+                            <small class="text-muted">Optional: Leave empty to make this department available to all organizations</small>
+                        <?php endif; ?>
                     </div>
 
                     <div class="form-group">

@@ -6,6 +6,7 @@ use App\Classes\OrganizationBranch;
 use App\Classes\OrganizationBranchRepository;
 use App\Classes\OrganizationRepository;
 use App\Components\PhoneNumberField;
+use App\Components\OrganizationField;
 
 $auth = new Auth();
 $auth->requireAuth();
@@ -209,20 +210,29 @@ include __DIR__ . '/../../../../../views/header.php';
                 </div>
 
                 <!-- Organization Field (Readonly) -->
-                <div style="margin-bottom: 1.5rem;">
-                    <label for="organization_name" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                        Organization <span style="color: #f44336;">*</span>
-                    </label>
-                    <input
-                        type="text"
-                        id="organization_name"
-                        value="<?php echo $organization ? htmlspecialchars($organization->getName()) : 'No organization selected'; ?>"
-                        readonly
-                        style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem; background-color: var(--bg-light); color: var(--text-color);"
-                    >
-                    <input type="hidden" name="organization_id" value="<?php echo htmlspecialchars($branch->getOrganizationId() ?? ''); ?>">
-                    <small class="text-muted">Branch belongs to the currently selected organization</small>
-                </div>
+                <?php if ($organization): ?>
+                    <?php echo OrganizationField::render([
+                        'label' => 'Organization',
+                        'name' => 'organization_id',
+                        'organization_id' => $organization->getId(),
+                        'organization_name' => $organization->getFullName(),
+                        'required' => true,
+                        'help_text' => 'Branch belongs to the currently selected organization'
+                    ]); ?>
+                <?php else: ?>
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
+                            Organization <span style="color: #f44336;">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            value="No organization selected"
+                            readonly
+                            style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem; background-color: var(--bg-light); color: var(--text-color);"
+                        >
+                        <small class="text-muted" style="color: #f44336;">Please select an organization first</small>
+                    </div>
+                <?php endif; ?>
 
                 <!-- Description Field -->
                 <div style="margin-bottom: 1.5rem;">

@@ -8,6 +8,7 @@ use App\Classes\OrganizationRepository;
 use App\Classes\OrganizationBranchRepository;
 use App\Components\PhoneNumberField;
 use App\Components\PostalAddressField;
+use App\Components\OrganizationField;
 
 $auth = new Auth();
 $auth->requireAuth();
@@ -126,6 +127,12 @@ $branches = $branchRepo->findByUser($user->getId());
 $selectedOrgId = $_GET['organization_id'] ?? $building->getOrganizationId() ?? '';
 $selectedBranchId = $_GET['branch_id'] ?? $building->getBranchId() ?? '';
 
+// Get organization object if selected
+$selectedOrganization = null;
+if ($selectedOrgId) {
+    $selectedOrganization = $orgRepo->findById($selectedOrgId, $user->getId());
+}
+
 $pageTitle = $isEdit ? 'Edit Building' : 'New Building';
 include __DIR__ . '/../../../../../../../views/header.php';
 ?>
@@ -172,8 +179,21 @@ include __DIR__ . '/../../../../../../../views/header.php';
             <div style="margin-bottom: 2rem;">
                 <h2 class="card-title">Basic Information</h2>
 
-                <!-- Hidden organization_id field - will be populated from selected branch -->
-                <input type="hidden" name="organization_id" id="organization_id" value="<?php echo htmlspecialchars($selectedOrgId); ?>">
+                <!-- Organization Field (readonly, populated from selected branch) -->
+                <?php if ($selectedOrganization): ?>
+                    <?php echo OrganizationField::render([
+                        'label' => 'Organization',
+                        'name' => 'organization_id',
+                        'id' => 'organization_id',
+                        'organization_id' => $selectedOrganization->getId(),
+                        'organization_name' => $selectedOrganization->getFullName(),
+                        'required' => true,
+                        'help_text' => 'Organization is determined by the selected branch'
+                    ]); ?>
+                <?php else: ?>
+                    <!-- Hidden field for when no org selected yet - JS will populate this -->
+                    <input type="hidden" name="organization_id" id="organization_id" value="">
+                <?php endif; ?>
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
                     <!-- Branch -->

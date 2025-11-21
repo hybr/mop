@@ -19,7 +19,9 @@
       "Bash(mv:*)",
       "Bash(php:*)",
       "Bash(bash:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(curl:*)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []

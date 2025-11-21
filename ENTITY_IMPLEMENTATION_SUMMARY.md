@@ -2,11 +2,6 @@
 
 ## ✅ Organization Entity Implementation Complete
 
-Other Files to follow
-    - `permissions.md`
-    - `navigation.md`
-    - and rules in this file
----
 
 ## 📋 Implemented Features
 

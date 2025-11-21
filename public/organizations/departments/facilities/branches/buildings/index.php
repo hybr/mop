@@ -77,9 +77,9 @@ include __DIR__ . '/../../../../../../views/header.php';
             <a href="/organizations/departments/facilities/branches/buildings/" class="btn btn-primary" style="padding: 1rem; text-align: center;">
                 Buildings
             </a>
-            <button class="btn btn-secondary" style="padding: 1rem; opacity: 0.6;" disabled title="Coming soon">
+            <a href="/organizations/departments/facilities/branches/buildings/workstations/" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
                 Workstations
-            </button>
+            </a>
         </div>
     </div>
 

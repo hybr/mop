@@ -5,6 +5,7 @@ use App\Classes\Auth;
 use App\Classes\DepartmentTeam;
 use App\Classes\FacilityTeamRepository;
 use App\Classes\OrganizationRepository;
+use App\Components\OrganizationField;
 
 $auth = new Auth();
 $auth->requireAuth();
@@ -64,6 +65,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Get organizations for dropdown
 $organizations = $orgRepo->findAllByUser($user->getId());
+
+// Get selected organization details if organization_id is set
+$selectedOrganization = null;
+if ($team->getOrganizationId()) {
+    $selectedOrganization = $orgRepo->findById($team->getOrganizationId(), $user->getId());
+}
 
 // Get facility teams for parent dropdown (exclude current if editing)
 $allTeams = $facilityTeamRepo->findAll(200);
@@ -177,25 +184,35 @@ include __DIR__ . '/../../../../../views/header.php';
                 </h2>
 
                 <!-- Organization Field -->
-                <div style="margin-bottom: 1.5rem;">
-                    <label for="organization_id" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
-                        Organization
-                    </label>
-                    <select
-                        id="organization_id"
-                        name="organization_id"
-                        style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"
-                    >
-                        <option value="">Global (All Organizations)</option>
-                        <?php foreach ($organizations as $org): ?>
-                            <option value="<?php echo $org->getId(); ?>"
-                                <?php echo ($team->getOrganizationId() === $org->getId()) ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($org->getName()); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    <small class="text-muted">Leave as Global if this team applies to all organizations</small>
-                </div>
+                <?php if ($selectedOrganization): ?>
+                    <?php echo OrganizationField::render([
+                        'label' => 'Organization',
+                        'name' => 'organization_id',
+                        'organization_id' => $selectedOrganization->getId(),
+                        'organization_name' => $selectedOrganization->getFullName(),
+                        'required' => false,
+                        'help_text' => 'This team is assigned to this organization'
+                    ]); ?>
+                <?php else: ?>
+                    <div style="margin-bottom: 1.5rem;">
+                        <label for="organization_id" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
+                            Organization
+                        </label>
+                        <select
+                            id="organization_id"
+                            name="organization_id"
+                            style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"
+                        >
+                            <option value="">Global (All Organizations)</option>
+                            <?php foreach ($organizations as $org): ?>
+                                <option value="<?php echo $org->getId(); ?>">
+                                    <?php echo htmlspecialchars($org->getName()); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <small class="text-muted">Leave as Global if this team applies to all organizations</small>
+                    </div>
+                <?php endif; ?>
 
                 <!-- Parent Team Field -->
                 <div style="margin-bottom: 1.5rem;">
