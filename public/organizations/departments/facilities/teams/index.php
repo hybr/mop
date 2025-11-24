@@ -3,8 +3,9 @@ require_once __DIR__ . '/../../../../../src/includes/autoload.php';
 
 use App\Classes\Auth;
 use App\Classes\OrganizationRepository;
-use App\Classes\FacilityTeamRepository;
-use App\Classes\DepartmentTeam;
+use App\Classes\OrganizationDepartmentRepository;
+use App\Classes\OrganizationDepartmentTeamRepository;
+use App\Classes\OrganizationDepartmentTeam;
 
 $auth = new Auth();
 
@@ -18,25 +19,43 @@ $auth->requireAuth();
 
 $user = $auth->getCurrentUser();
 $orgRepo = new OrganizationRepository();
-$facilityTeamRepo = new FacilityTeamRepository();
+$deptRepo = new OrganizationDepartmentRepository();
+$teamRepo = new OrganizationDepartmentTeamRepository();
 
 // Get organizations for current user
 $organizations = $orgRepo->findAllByUser($user->getId());
 
-// Get facility teams
-$facilityTeams = $facilityTeamRepo->findAll();
+// Find the Facilities department to filter teams
+$facilitiesDept = null;
+$allDepts = $deptRepo->findAll();
+foreach ($allDepts as $dept) {
+    if (strtoupper($dept->getCode()) === 'FACILITIES' || stripos($dept->getName(), 'Facilit') !== false) {
+        $facilitiesDept = $dept;
+        break;
+    }
+}
+
+// Get facility teams (teams belonging to Facilities department)
+$facilityTeams = [];
+if ($facilitiesDept) {
+    $facilityTeams = $teamRepo->findByDepartment($facilitiesDept->getId());
+} else {
+    // Fallback: get all teams if no Facilities department found
+    $facilityTeams = $teamRepo->findAll();
+}
+
 $deletedTeams = [];
 
 // Only Super Admin can view deleted teams
-if ($facilityTeamRepo->isSuperAdmin($user->getEmail())) {
+if ($teamRepo->isSuperAdmin($user->getEmail())) {
     try {
-        $deletedTeams = $facilityTeamRepo->findDeleted($user->getEmail());
+        $deletedTeams = $teamRepo->findDeleted($user->getEmail());
     } catch (Exception $e) {
         // Silently handle if not authorized
     }
 }
 
-$totalCount = $facilityTeamRepo->count(false);
+$totalCount = $teamRepo->count(false);
 
 $pageTitle = 'Facility Teams';
 include __DIR__ . '/../../../../../views/header.php';
@@ -179,7 +198,7 @@ include __DIR__ . '/../../../../../views/header.php';
                                 </td>
                                 <td style="padding: 1rem; white-space: nowrap;">
                                     <a href="/organizations/departments/facilities/teams/form/?id=<?php echo $dept->getId(); ?>" class="btn btn-secondary" style="padding: 0.5rem 1rem; margin-right: 0.5rem;">Edit</a>
-                                    <?php if ($facilityTeamRepo->isSuperAdmin($user->getEmail())): ?>
+                                    <?php if ($teamRepo->isSuperAdmin($user->getEmail())): ?>
                                         <a href="/organizations/departments/facilities/teams/delete/?id=<?php echo $dept->getId(); ?>" class="btn btn-danger" style="padding: 0.5rem 1rem;" onclick="return confirm('Are you sure you want to delete this facility team?');">Delete</a>
                                     <?php endif; ?>
                                 </td>
@@ -216,7 +235,7 @@ include __DIR__ . '/../../../../../views/header.php';
                         </div>
                         <div style="display: flex; gap: 0.5rem;">
                             <a href="/organizations/departments/facilities/teams/form/?id=<?php echo $dept->getId(); ?>" class="btn btn-secondary" style="flex: 1; text-align: center;">Edit</a>
-                            <?php if ($facilityTeamRepo->isSuperAdmin($user->getEmail())): ?>
+                            <?php if ($teamRepo->isSuperAdmin($user->getEmail())): ?>
                                 <a href="/organizations/departments/facilities/teams/delete/?id=<?php echo $dept->getId(); ?>" class="btn btn-danger" style="flex: 1; text-align: center;" onclick="return confirm('Are you sure you want to delete this facility team?');">Delete</a>
                             <?php endif; ?>
                         </div>

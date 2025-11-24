@@ -4,34 +4,25 @@ namespace App\Classes;
 
 use App\Config\Database;
 
-/**
- * FacilityTeamRepository
- * Handles CRUD operations for Facility Teams
- * Implements permissions per permissions.md
- */
-class FacilityTeamRepository {
+class OrganizationDepartmentTeamRepository {
     private $db;
-    private $tableName = 'department_teams';
+    private $tableName = 'organization_department_teams';
 
     public function __construct() {
         $this->db = Database::getInstance();
     }
 
     /**
-     * Create a new facility team
-     * Per permissions.md: Organization Admin and Organization Workers can create
+     * Create a new organization department team
+     * Per permissions.md: HR Manager position required to create
      */
-    public function create(DepartmentTeam $team, $userId, $userEmail) {
-        // Check code uniqueness
-        if ($this->codeExists($team->getCode())) {
-            throw new \Exception("Facility team code '{$team->getCode()}' is already taken. Please choose another.");
+    public function create(OrganizationDepartmentTeam $team, $userId, $userEmail) {
+        // Check code uniqueness within the department
+        if ($this->codeExists($team->getCode(), $team->getOrganizationDepartmentId())) {
+            throw new \Exception("Team code '{$team->getCode()}' already exists in this department. Please choose another.");
         }
 
-        // Generate unique ID
-        $id = $this->generateId();
-
         $data = [
-            'id' => $id,
             'name' => $team->getName(),
             'code' => $team->getCode(),
             'description' => $team->getDescription(),
@@ -60,12 +51,12 @@ class FacilityTeamRepository {
             return $team;
         }
 
-        throw new \Exception("Failed to create facility team: " . json_encode($response['data'] ?? 'Unknown error'));
+        throw new \Exception("Failed to create department team: " . json_encode($response['data'] ?? 'Unknown error'));
     }
 
     /**
-     * Find facility team by ID
-     * Per permissions.md: Organization Admin and Organization Workers can view
+     * Find department team by ID (any user can view)
+     * Per permissions.md: All users can view organization department teams
      */
     public function findById($id) {
         if ($this->db->getDriver() === 'sqlite') {
@@ -76,13 +67,13 @@ class FacilityTeamRepository {
             $data = $stmt->fetch();
 
             if ($data) {
-                return new DepartmentTeam($data);
+                return new OrganizationDepartmentTeam($data);
             }
         } else {
             $response = $this->db->request('GET', $this->tableName . '?id=eq.' . $id . '&deleted_at=is.null');
 
             if ($response['success'] && !empty($response['data'])) {
-                return new DepartmentTeam($response['data'][0]);
+                return new OrganizationDepartmentTeam($response['data'][0]);
             }
         }
 
@@ -90,8 +81,8 @@ class FacilityTeamRepository {
     }
 
     /**
-     * Get all active facility teams (non-deleted)
-     * Per permissions.md: Organization Admin and Organization Workers can view
+     * Get all active department teams (non-deleted)
+     * Per permissions.md: All users can view organization department teams
      */
     public function findAll($limit = 100, $offset = 0) {
         if ($this->db->getDriver() === 'sqlite') {
@@ -105,7 +96,7 @@ class FacilityTeamRepository {
 
             $teams = [];
             foreach ($data as $teamData) {
-                $teams[] = new DepartmentTeam($teamData);
+                $teams[] = new OrganizationDepartmentTeam($teamData);
             }
             return $teams;
         } else {
@@ -114,7 +105,7 @@ class FacilityTeamRepository {
             if ($response['success']) {
                 $teams = [];
                 foreach ($response['data'] as $teamData) {
-                    $teams[] = new DepartmentTeam($teamData);
+                    $teams[] = new OrganizationDepartmentTeam($teamData);
                 }
                 return $teams;
             }
@@ -124,8 +115,45 @@ class FacilityTeamRepository {
     }
 
     /**
-     * Get all facility teams for a specific organization
-     * Per permissions.md: Organization Admin and Organization Workers can view
+     * Get all teams for a specific department
+     * Per permissions.md: All users can view organization department teams
+     */
+    public function findByDepartment($departmentId, $limit = 100) {
+        if ($this->db->getDriver() === 'sqlite') {
+            $pdo = $this->db->getPdo();
+            $stmt = $pdo->prepare("SELECT * FROM {$this->tableName}
+                    WHERE deleted_at IS NULL AND is_active = 1
+                    AND organization_department_id = ?
+                    ORDER BY sort_order ASC, name ASC LIMIT ?");
+            $stmt->execute([$departmentId, $limit]);
+            $data = $stmt->fetchAll();
+
+            $teams = [];
+            foreach ($data as $teamData) {
+                $teams[] = new OrganizationDepartmentTeam($teamData);
+            }
+            return $teams;
+        } else {
+            $endpoint = $this->tableName . '?deleted_at=is.null&is_active=eq.true&organization_department_id=eq.' . $departmentId;
+            $endpoint .= '&limit=' . $limit . '&order=sort_order.asc,name.asc';
+
+            $response = $this->db->request('GET', $endpoint);
+
+            if ($response['success']) {
+                $teams = [];
+                foreach ($response['data'] as $teamData) {
+                    $teams[] = new OrganizationDepartmentTeam($teamData);
+                }
+                return $teams;
+            }
+        }
+
+        return [];
+    }
+
+    /**
+     * Get all teams for a specific organization
+     * Per permissions.md: All users can view organization department teams
      */
     public function findByOrganization($organizationId, $limit = 100) {
         if ($this->db->getDriver() === 'sqlite') {
@@ -150,7 +178,7 @@ class FacilityTeamRepository {
 
             $teams = [];
             foreach ($data as $teamData) {
-                $teams[] = new DepartmentTeam($teamData);
+                $teams[] = new OrganizationDepartmentTeam($teamData);
             }
             return $teams;
         } else {
@@ -167,7 +195,7 @@ class FacilityTeamRepository {
             if ($response['success']) {
                 $teams = [];
                 foreach ($response['data'] as $teamData) {
-                    $teams[] = new DepartmentTeam($teamData);
+                    $teams[] = new OrganizationDepartmentTeam($teamData);
                 }
                 return $teams;
             }
@@ -177,23 +205,28 @@ class FacilityTeamRepository {
     }
 
     /**
-     * Update facility team
-     * Per permissions.md: Organization Admin can update
+     * Update department team
+     * Per permissions.md: Only Super Admin can update
      */
-    public function update(DepartmentTeam $team, $userId, $userEmail) {
+    public function update(OrganizationDepartmentTeam $team, $userId, $userEmail) {
         if (!$team->getId()) {
-            throw new \Exception("Facility department ID is required for update");
+            throw new \Exception("Department team ID is required for update");
         }
 
-        // Verify department exists
+        // Check Super Admin permission
+        if (!$this->isSuperAdmin($userEmail)) {
+            throw new \Exception("Only Super Admin can update department teams");
+        }
+
+        // Verify team exists
         $existing = $this->findById($team->getId());
         if (!$existing) {
-            throw new \Exception("Facility department not found");
+            throw new \Exception("Department team not found");
         }
 
-        // Check code uniqueness (excluding current dept)
-        if ($this->codeExists($team->getCode(), $team->getId())) {
-            throw new \Exception("Facility department code '{$team->getCode()}' is already taken. Please choose another.");
+        // Check code uniqueness (excluding current team)
+        if ($this->codeExists($team->getCode(), $team->getOrganizationDepartmentId(), $team->getId())) {
+            throw new \Exception("Team code '{$team->getCode()}' already exists in this department. Please choose another.");
         }
 
         $data = [
@@ -201,6 +234,7 @@ class FacilityTeamRepository {
             'code' => $team->getCode(),
             'description' => $team->getDescription(),
             'parent_team_id' => $team->getParentTeamId(),
+            'organization_department_id' => $team->getOrganizationDepartmentId(),
             'organization_id' => $team->getOrganizationId(),
             'is_active' => $team->getIsActive(),
             'sort_order' => $team->getSortOrder(),
@@ -246,23 +280,23 @@ class FacilityTeamRepository {
             }
         }
 
-        throw new \Exception("Failed to update facility team");
+        throw new \Exception("Failed to update department team");
     }
 
     /**
-     * Soft delete facility team
-     * Per permissions.md: Super Admin can delete
+     * Soft delete department team
+     * Per permissions.md: Only Super Admin can delete
      */
     public function softDelete($id, $userId, $userEmail) {
         // Check Super Admin permission
         if (!$this->isSuperAdmin($userEmail)) {
-            throw new \Exception("Only Super Admin can delete facility teams");
+            throw new \Exception("Only Super Admin can delete department teams");
         }
 
-        // Verify department exists
+        // Verify team exists
         $existing = $this->findById($id);
         if (!$existing) {
-            throw new \Exception("Facility department not found");
+            throw new \Exception("Department team not found");
         }
 
         $data = [
@@ -284,13 +318,13 @@ class FacilityTeamRepository {
     }
 
     /**
-     * Permanently delete facility team
-     * Per permissions.md: Super Admin can delete
+     * Permanently delete department team
+     * Per permissions.md: Only Super Admin can delete
      */
     public function hardDelete($id, $userEmail) {
         // Check Super Admin permission
         if (!$this->isSuperAdmin($userEmail)) {
-            throw new \Exception("Only Super Admin can permanently delete facility teams");
+            throw new \Exception("Only Super Admin can delete department teams");
         }
 
         if ($this->db->getDriver() === 'sqlite') {
@@ -305,13 +339,13 @@ class FacilityTeamRepository {
     }
 
     /**
-     * Get deleted facility teams (for trash/restore functionality)
-     * Per permissions.md: Super Admin can view deleted
+     * Get deleted department teams (for trash/restore functionality)
+     * Per permissions.md: Only Super Admin can view deleted
      */
     public function findDeleted($userEmail, $limit = 100) {
         // Check Super Admin permission
         if (!$this->isSuperAdmin($userEmail)) {
-            throw new \Exception("Only Super Admin can view deleted facility teams");
+            throw new \Exception("Only Super Admin can view deleted department teams");
         }
 
         if ($this->db->getDriver() === 'sqlite') {
@@ -325,7 +359,7 @@ class FacilityTeamRepository {
 
             $teams = [];
             foreach ($data as $teamData) {
-                $teams[] = new DepartmentTeam($teamData);
+                $teams[] = new OrganizationDepartmentTeam($teamData);
             }
             return $teams;
         } else {
@@ -334,7 +368,7 @@ class FacilityTeamRepository {
             if ($response['success']) {
                 $teams = [];
                 foreach ($response['data'] as $teamData) {
-                    $teams[] = new DepartmentTeam($teamData);
+                    $teams[] = new OrganizationDepartmentTeam($teamData);
                 }
                 return $teams;
             }
@@ -344,13 +378,13 @@ class FacilityTeamRepository {
     }
 
     /**
-     * Restore soft-deleted facility team
-     * Per permissions.md: Super Admin can restore
+     * Restore soft-deleted department team
+     * Per permissions.md: Only Super Admin can restore
      */
     public function restore($id, $userEmail) {
         // Check Super Admin permission
         if (!$this->isSuperAdmin($userEmail)) {
-            throw new \Exception("Only Super Admin can restore facility teams");
+            throw new \Exception("Only Super Admin can restore department teams");
         }
 
         if ($this->db->getDriver() === 'sqlite') {
@@ -368,7 +402,7 @@ class FacilityTeamRepository {
     }
 
     /**
-     * Search facility teams by name or code
+     * Search department teams by name or code
      */
     public function search($query, $limit = 20) {
         if ($this->db->getDriver() === 'sqlite') {
@@ -383,7 +417,7 @@ class FacilityTeamRepository {
 
             $teams = [];
             foreach ($data as $teamData) {
-                $teams[] = new DepartmentTeam($teamData);
+                $teams[] = new OrganizationDepartmentTeam($teamData);
             }
             return $teams;
         } else {
@@ -392,7 +426,7 @@ class FacilityTeamRepository {
             if ($response['success']) {
                 $teams = [];
                 foreach ($response['data'] as $teamData) {
-                    $teams[] = new DepartmentTeam($teamData);
+                    $teams[] = new OrganizationDepartmentTeam($teamData);
                 }
                 return $teams;
             }
@@ -402,7 +436,7 @@ class FacilityTeamRepository {
     }
 
     /**
-     * Count all facility teams
+     * Count all department teams
      */
     public function count($includeDeleted = false) {
         if ($this->db->getDriver() === 'sqlite') {
@@ -433,14 +467,19 @@ class FacilityTeamRepository {
     }
 
     /**
-     * Check if facility team code already exists
+     * Check if team code already exists within a department
      */
-    public function codeExists($code, $excludeId = null) {
+    public function codeExists($code, $departmentId = null, $excludeId = null) {
         if ($this->db->getDriver() === 'sqlite') {
             $pdo = $this->db->getPdo();
             $sql = "SELECT COUNT(*) as count FROM {$this->tableName}
                     WHERE code = ? AND deleted_at IS NULL";
             $params = [$code];
+
+            if ($departmentId !== null) {
+                $sql .= " AND organization_department_id = ?";
+                $params[] = $departmentId;
+            }
 
             if ($excludeId) {
                 $sql .= " AND id != ?";
@@ -453,6 +492,9 @@ class FacilityTeamRepository {
             return $result['count'] > 0;
         } else {
             $endpoint = $this->tableName . '?code=eq.' . urlencode($code) . '&deleted_at=is.null';
+            if ($departmentId !== null) {
+                $endpoint .= '&organization_department_id=eq.' . $departmentId;
+            }
             if ($excludeId) {
                 $endpoint .= '&id=neq.' . $excludeId;
             }
@@ -462,13 +504,17 @@ class FacilityTeamRepository {
     }
 
     /**
-     * Get facility teams as options for dropdown (for foreign key usage)
+     * Get department teams as options for dropdown (for foreign key usage)
      * Returns array of ['value' => id, 'label' => label]
      */
-    public function getAsOptions($organizationId = null) {
-        $teams = $organizationId !== null
-            ? $this->findByOrganization($organizationId)
-            : $this->findAll();
+    public function getAsOptions($departmentId = null, $organizationId = null) {
+        if ($departmentId !== null) {
+            $teams = $this->findByDepartment($departmentId);
+        } elseif ($organizationId !== null) {
+            $teams = $this->findByOrganization($organizationId);
+        } else {
+            $teams = $this->findAll();
+        }
 
         $options = [];
         foreach ($teams as $team) {
@@ -481,21 +527,6 @@ class FacilityTeamRepository {
     }
 
     /**
-     * Generate unique ID
-     */
-    private function generateId() {
-        // Generate UUID v4-like ID
-        return sprintf(
-            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
-            mt_rand(0, 0xffff),
-            mt_rand(0, 0x0fff) | 0x4000,
-            mt_rand(0, 0x3fff) | 0x8000,
-            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
-        );
-    }
-
-    /**
      * Check if user is Super Admin
      * Per permissions.md: sharma.yogesh.1234@gmail.com is the Super Admin
      */
@@ -504,15 +535,15 @@ class FacilityTeamRepository {
     }
 
     /**
-     * Check if user can edit facility team
+     * Check if user can edit department team
+     * Per permissions.md: Only Super Admin can edit
      */
     public function canEdit($userEmail) {
-        // Organization Admin or Super Admin can edit
-        return true; // TODO: Implement organization admin check
+        return $this->isSuperAdmin($userEmail);
     }
 
     /**
-     * Check if user can delete facility team
+     * Check if user can delete department team
      * Per permissions.md: Only Super Admin can delete
      */
     public function canDelete($userEmail) {
