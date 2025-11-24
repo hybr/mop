@@ -3,6 +3,9 @@ REM ===========================
 REM Database Setup Script
 REM ===========================
 REM This script recreates the database from scratch using seed files
+REM Seed files are executed in order based on their numeric prefix (e.g., 0010_, 0020_)
+
+setlocal enabledelayedexpansion
 
 echo ========================================
 echo Database Setup Script
@@ -23,80 +26,64 @@ if exist %DB_PATH% (
 echo Creating new database...
 echo.
 
-REM Execute seed files in sequence
-echo Executing seed files...
-echo.
+REM Count total seed files
+set /a TOTAL=0
+for %%f in (database\seed\*.sql) do set /a TOTAL+=1
 
-echo [1/6] Creating users table and seed data...
-sqlite3 %DB_PATH% < database\seed\0010_users.sql
-if %ERRORLEVEL% NEQ 0 (
-    echo ERROR: Failed to execute 0010_users.sql
+if %TOTAL% EQU 0 (
+    echo ERROR: No seed files found in database\seed\
     pause
     exit /b 1
 )
-echo Users table created successfully.
+
+echo Found %TOTAL% seed file(s) to execute.
 echo.
 
-echo [2/6] Creating organizations table and seed data...
-sqlite3 %DB_PATH% < database\seed\0020_organizations.sql
-if %ERRORLEVEL% NEQ 0 (
-    echo ERROR: Failed to execute 0020_organizations.sql
-    pause
-    exit /b 1
+REM Execute seed files in sequence (sorted by filename)
+set /a COUNT=0
+for /f "tokens=*" %%f in ('dir /b /o:n database\seed\*.sql 2^>nul') do (
+    set /a COUNT+=1
+    echo [!COUNT!/%TOTAL%] Executing %%f...
+    sqlite3 %DB_PATH% < "database\seed\%%f"
+    if !ERRORLEVEL! NEQ 0 (
+        echo ERROR: Failed to execute %%f
+        pause
+        exit /b 1
+    )
+    echo %%f executed successfully.
+    echo.
 )
-echo Organizations table created successfully.
-echo.
-
-echo [3/6] Creating organization_departments table and seed data...
-sqlite3 %DB_PATH% < database\seed\0030_organization_departments.sql
-if %ERRORLEVEL% NEQ 0 (
-    echo ERROR: Failed to execute 0030_organization_departments.sql
-    pause
-    exit /b 1
-)
-echo Organization departments table created successfully.
-echo.
-
-echo [4/6] Creating auth_sessions table...
-sqlite3 %DB_PATH% < database\seed\0040_auth_sessions.sql
-if %ERRORLEVEL% NEQ 0 (
-    echo ERROR: Failed to execute 0040_auth_sessions.sql
-    pause
-    exit /b 1
-)
-echo Auth sessions table created successfully.
-echo.
-
-echo [5/6] Creating facility_teams table...
-sqlite3 %DB_PATH% < database\seed\0050_facility_teams.sql
-if %ERRORLEVEL% NEQ 0 (
-    echo ERROR: Failed to execute 0050_facility_teams.sql
-    pause
-    exit /b 1
-)
-echo Facility teams table created successfully.
-echo.
-
-echo [6/6] Creating organization_branches table...
-sqlite3 %DB_PATH% < database\seed\0060_organization_branches.sql
-if %ERRORLEVEL% NEQ 0 (
-    echo ERROR: Failed to execute 0060_organization_branches.sql
-    pause
-    exit /b 1
-)
-echo Organization branches table created successfully.
-echo.
 
 echo ========================================
 echo Database setup completed successfully!
 echo ========================================
 echo.
 echo Database location: %DB_PATH%
+echo Executed %COUNT% seed file(s).
 echo.
 
-REM Display table count
-echo Verifying tables...
+REM Verify database - count tables and show them
+echo Verifying database...
+echo.
+
+echo Tables created:
 sqlite3 %DB_PATH% ".tables"
+echo.
+
+REM Count tables
+for /f %%a in ('sqlite3 %DB_PATH% "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%%';"') do set TABLE_COUNT=%%a
+echo Total tables: %TABLE_COUNT%
+echo.
+
+REM Show row counts for each table
+echo Row counts per table:
+echo ----------------------------------------
+for /f "tokens=*" %%t in ('sqlite3 %DB_PATH% "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%%' ORDER BY name;"') do (
+    for /f %%c in ('sqlite3 %DB_PATH% "SELECT COUNT(*) FROM %%t;"') do (
+        echo   %%t: %%c rows
+    )
+)
+echo ----------------------------------------
 echo.
 
 echo Setup complete!

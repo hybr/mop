@@ -127,7 +127,7 @@ All V4L branding and feature updates have been successfully implemented!
 ### Public Pages
 7. ✅ `public/organization-form.php` - Create/Edit form updated
 8. ✅ `public/organizations.php` - List page updated
-9. ✅ `public/register.php` - Registration form updated
+9. ✅ `public/auth/register` - Registration form updated
 10. ✅ `public/auth/login` - Login form updated
 
 ### Views

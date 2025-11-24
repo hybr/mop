@@ -106,11 +106,10 @@ $pageTitle = $isEdit ? 'Edit Organization' : 'New Organization';
 include __DIR__ . '/../../../views/header.php';
 ?>
 
-<div class="py-4">
-    <div style="max-width: 800px; margin: 0 auto;">
-        <div style="margin-bottom: 2rem;">
-            <a href="/organizations/" class="link">← Back to Organizations</a>
-        </div>
+<div class="page-content">
+    <div class="back-link">
+        <a href="/organizations/" class="link">← Back to Organizations</a>
+    </div>
 
         <div class="card">
             <h1 class="card-title"><?php echo $isEdit ? 'Edit Organization' : 'Create New Organization'; ?></h1>
@@ -151,7 +150,7 @@ include __DIR__ . '/../../../views/header.php';
 
                 <div class="form-group">
                     <label for="subdomain" class="form-label">Subdomain *</label>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <div class="form-row">
                         <input
                             type="text"
                             id="subdomain"
@@ -163,9 +162,8 @@ include __DIR__ . '/../../../views/header.php';
                             maxlength="63"
                             value="<?php echo $organization ? htmlspecialchars($organization->getSubdomain()) : ''; ?>"
                             placeholder="acmecorp"
-                            style="flex: 1;"
                         >
-                        <span>.v4l.app</span>
+                        <span class="form-suffix">.v4l.app</span>
                     </div>
                     <small class="text-muted text-small">
                         Your organization will be accessible at https://subdomain.v4l.app
@@ -228,7 +226,7 @@ include __DIR__ . '/../../../views/header.php';
                     <small class="text-muted text-small">Inactive organizations are hidden but not deleted</small>
                 </div>
 
-                <div class="form-group" style="display: flex; gap: 1rem;">
+                <div class="form-group btn-group">
                     <button type="submit" class="btn btn-primary">
                         <?php echo $isEdit ? 'Update Organization' : 'Create Organization'; ?>
                     </button>
@@ -262,24 +260,23 @@ include __DIR__ . '/../../../views/header.php';
             <?php endif; ?>
         </div>
 
-        <?php if ($isEdit && $organization): ?>
-            <div class="card" style="margin-top: 2rem;">
-                <h3 class="card-title">Audit Information</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                    <div>
-                        <p class="text-muted text-small mb-1">Created</p>
-                        <p><?php echo date('F j, Y g:i A', strtotime($organization->getCreatedAt())); ?></p>
-                    </div>
-                    <?php if ($organization->getUpdatedAt() && $organization->getUpdatedAt() != $organization->getCreatedAt()): ?>
-                        <div>
-                            <p class="text-muted text-small mb-1">Last Updated</p>
-                            <p><?php echo date('F j, Y g:i A', strtotime($organization->getUpdatedAt())); ?></p>
-                        </div>
-                    <?php endif; ?>
+    <?php if ($isEdit && $organization): ?>
+        <div class="card mt-3">
+            <h3 class="card-title">Audit Information</h3>
+            <div class="info-grid">
+                <div>
+                    <p class="text-muted text-small mb-1">Created</p>
+                    <p><?php echo date('F j, Y g:i A', strtotime($organization->getCreatedAt())); ?></p>
                 </div>
+                <?php if ($organization->getUpdatedAt() && $organization->getUpdatedAt() != $organization->getCreatedAt()): ?>
+                    <div>
+                        <p class="text-muted text-small mb-1">Last Updated</p>
+                        <p><?php echo date('F j, Y g:i A', strtotime($organization->getUpdatedAt())); ?></p>
+                    </div>
+                <?php endif; ?>
             </div>
-        <?php endif; ?>
-    </div>
+        </div>
+    <?php endif; ?>
 </div>
 
 <?php include __DIR__ . '/../../../views/footer.php'; ?>

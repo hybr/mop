@@ -31,7 +31,6 @@ class OrganizationBuildingRepository {
             'name' => $building->getName(),
             'code' => $building->getCode(),
             'description' => $building->getDescription(),
-            'postal_address' => $building->getPostalAddress(),
             'street_address' => $building->getStreetAddress(),
             'city' => $building->getCity(),
             'state' => $building->getState(),
@@ -179,7 +178,6 @@ class OrganizationBuildingRepository {
             'name' => $building->getName(),
             'code' => $building->getCode(),
             'description' => $building->getDescription(),
-            'postal_address' => $building->getPostalAddress(),
             'street_address' => $building->getStreetAddress(),
             'city' => $building->getCity(),
             'state' => $building->getState(),
@@ -289,7 +287,7 @@ class OrganizationBuildingRepository {
         $pdo = $this->db->getPdo();
         $sql = "SELECT * FROM {$this->tableName}
                 WHERE deleted_at IS NULL AND is_active = 1
-                AND (name LIKE ? OR city LIKE ? OR code LIKE ? OR postal_address LIKE ?)";
+                AND (name LIKE ? OR city LIKE ? OR code LIKE ? OR street_address LIKE ?)";
 
         $params = ["%$query%", "%$query%", "%$query%", "%$query%"];
 

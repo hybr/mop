@@ -79,9 +79,15 @@ body {
 }
 
 .nav {
-    display: flex;
+    display: none;
     gap: 1rem;
     align-items: center;
+}
+
+@media (min-width: 768px) {
+    .nav {
+        display: flex;
+    }
 }
 
 .nav a {
@@ -153,11 +159,19 @@ body {
 /* Forms */
 .form-container {
     background-color: var(--white);
-    padding: 2rem;
+    padding: 1.25rem;
     border-radius: 0.5rem;
     box-shadow: var(--shadow-md);
-    margin: 2rem auto;
-    max-width: 400px;
+    margin: 1rem;
+    max-width: 100%;
+}
+
+@media (min-width: 480px) {
+    .form-container {
+        padding: 2rem;
+        margin: 2rem auto;
+        max-width: 400px;
+    }
 }
 
 .form-title {
@@ -397,13 +411,63 @@ body {
     }
 }
 
+/* Phone number field responsive */
+.phone-field-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.phone-field-wrapper select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    font-size: 1rem;
+}
+
+.phone-field-wrapper input[type="tel"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    font-size: 1rem;
+}
+
+@media (min-width: 480px) {
+    .phone-field-wrapper {
+        flex-direction: row;
+    }
+
+    .phone-field-wrapper select {
+        flex: 0 0 180px;
+        width: auto;
+    }
+
+    .phone-field-wrapper input[type="tel"] {
+        flex: 1;
+        width: auto;
+    }
+}
+
 /* Mobile menu */
 .mobile-menu-btn {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: none;
-    border: none;
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
     font-size: 1.5rem;
     cursor: pointer;
+    padding: 0.5rem;
+    color: var(--text-color);
+    width: 44px;
+    height: 44px;
+}
+
+.mobile-menu-btn:hover {
+    background-color: var(--bg-color);
 }
 
 @media (min-width: 768px) {
@@ -414,27 +478,393 @@ body {
 
 .nav-mobile {
     display: none;
-    flex-direction: column;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
     background-color: var(--white);
     box-shadow: var(--shadow-md);
-    padding: 1rem;
+    padding: 0.5rem 0 1rem 0;
+    z-index: 99;
+    border-top: 1px solid var(--border-color);
 }
 
 .nav-mobile.active {
+    display: block;
+}
+
+.nav-mobile .container {
     display: flex;
+    flex-direction: column;
 }
 
 .nav-mobile a {
-    padding: 0.75rem;
+    display: block;
+    padding: 0.75rem 1rem;
     border-radius: 0.375rem;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.nav-mobile a:hover {
+    background-color: var(--bg-color);
+}
+
+.nav-mobile .btn {
+    margin-top: 0.5rem;
+    text-align: center;
+}
+
+.nav-mobile .org-link {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
 }
 
 @media (min-width: 768px) {
     .nav-mobile {
         display: none !important;
+    }
+}
+
+/* Page content container */
+.page-content {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 1rem 0;
+}
+
+@media (min-width: 768px) {
+    .page-content {
+        max-width: 800px;
+        padding: 2rem 0;
+    }
+}
+
+/* Form row for inline inputs */
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+@media (min-width: 480px) {
+    .form-row {
+        flex-direction: row;
+        align-items: center;
+    }
+}
+
+.form-row .form-input {
+    flex: 1;
+}
+
+.form-row .form-suffix {
+    white-space: nowrap;
+    color: var(--text-light);
+}
+
+/* Button group */
+.btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+@media (min-width: 480px) {
+    .btn-group {
+        flex-direction: row;
+        gap: 1rem;
+    }
+}
+
+.btn-group .btn {
+    text-align: center;
+}
+
+/* Grid layout for audit info and similar */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 480px) {
+    .info-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
+/* Back link styling */
+.back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .back-link {
+        margin-bottom: 2rem;
+    }
+}
+
+/* Breadcrumb navigation */
+.breadcrumb {
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding-bottom: 0.5rem;
+}
+
+.breadcrumb a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb-separator {
+    color: var(--text-light);
+    margin: 0 0.5rem;
+}
+
+/* Form section headers */
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.form-section-title {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-color);
+    font-size: 1.125rem;
+}
+
+@media (min-width: 768px) {
+    .form-section-title {
+        font-size: 1.25rem;
+    }
+}
+
+/* Form grid for multi-column layouts */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 480px) {
+    .form-grid {
+        gap: 1.5rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .form-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 480px) {
+    .form-grid-2 {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+}
+
+/* Full-width form items in grid */
+.form-full-width {
+    grid-column: 1 / -1;
+}
+
+/* Page title */
+.page-title {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .page-title {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+}
+
+/* Tips/help section card */
+.tips-card {
+    background-color: var(--bg-color);
+    margin-top: 1.5rem;
+}
+
+.tips-card h3 {
+    margin-bottom: 1rem;
+}
+
+.tips-card ul {
+    margin: 0;
+    padding-left: 1.5rem;
+    line-height: 1.8;
+}
+
+/* Form actions with responsive buttons */
+.form-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--border-color);
+}
+
+@media (min-width: 480px) {
+    .form-actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+}
+
+.form-actions .btn {
+    text-align: center;
+    padding: 0.75rem 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .form-actions .btn {
+        padding: 0.75rem 2rem;
+    }
+}
+
+.form-actions .btn-auto-right {
+    margin-left: auto;
+}
+
+@media (max-width: 479px) {
+    .form-actions .btn-auto-right {
+        margin-left: 0;
+    }
+}
+
+/* Textarea styling */
+textarea.form-input {
+    min-height: 100px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+/* Select styling */
+select.form-input {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236B7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2.5rem;
+}
+
+/* Checkbox label styling */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    gap: 0.5rem;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 1.125rem;
+    height: 1.125rem;
+    cursor: pointer;
+}
+
+.checkbox-label span {
+    font-weight: 500;
+}
+
+/* Card form wrapper */
+.card form {
+    max-width: 100%;
+}
+
+@media (min-width: 768px) {
+    .card form {
+        max-width: 800px;
+    }
+}
+
+/* Address fields responsive layout */
+.address-fields-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+@media (min-width: 480px) {
+    .address-fields-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+    }
+}
+
+.address-fields-row .form-input {
+    width: 100%;
+}
+
+/* Geocode section styling */
+.geocode-section {
+    border: 1px solid var(--border-color);
+    border-radius: 0.375rem;
+    padding: 1rem;
+    background-color: var(--bg-color);
+    margin-bottom: 0.75rem;
+}
+
+.geocode-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+@media (min-width: 480px) {
+    .geocode-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+.btn-geocode {
+    padding: 0.5rem 1rem;
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    white-space: nowrap;
+}
+
+.btn-geocode:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn-geocode:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.coordinates-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+}
+
+@media (min-width: 480px) {
+    .coordinates-row {
+        grid-template-columns: 1fr 1fr;
     }
 }

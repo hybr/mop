@@ -131,7 +131,7 @@ if ($branch->getOrganizationId()) {
 }
 
 $pageTitle = $isEdit ? 'Edit Branch' : 'New Branch';
-include __DIR__ . '/../../../../../views/header.php';
+include __DIR__ . '/../../../../../../views/header.php';
 ?>
 
 <div class="py-4">
@@ -515,4 +515,4 @@ input[type="checkbox"]:focus {
 }
 </style>
 
-<?php include __DIR__ . '/../../../../../views/footer.php'; ?>
+<?php include __DIR__ . '/../../../../../../views/footer.php'; ?>

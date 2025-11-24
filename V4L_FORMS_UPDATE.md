@@ -5,7 +5,7 @@
 Replace the form section with:
 
 ```php
-<form method="POST" action="/register.php">
+<form method="POST" action="/auth/register">
     <div class="form-group">
         <label for="username" class="form-label">Username *</label>
         <input

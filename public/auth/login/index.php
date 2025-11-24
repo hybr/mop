@@ -82,7 +82,7 @@ include __DIR__ . '/../../../views/header.php';
     </form>
 
     <p class="text-center mt-3">
-        Don't have an account? <a href="/register.php" class="link">Sign up here</a>
+        Don't have an account? <a href="/auth/register" class="link">Sign up here</a>
     </p>
 </div>
 

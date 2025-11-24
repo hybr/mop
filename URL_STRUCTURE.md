@@ -10,7 +10,7 @@ The application now uses folder-based URLs with `index.php` files for better SEO
 |---------|---------|-------------|
 | `/auth/login` | `/auth/login/` | User login |
 | `/logout.php` | `/auth/logout/` | User logout |
-| `/register.php` | `/auth/register/` | User registration |
+| `/auth/register` | `/auth/register/` | User registration |
 | `/forgot-password.php` | `/auth/forgot-password/` | Password recovery |
 | `/change-password.php` | `/auth/change-password/` | Change password |
 

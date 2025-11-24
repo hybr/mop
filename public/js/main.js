@@ -51,15 +51,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     });
 
-    // Mobile menu toggle (if needed)
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const navMobile = document.querySelector('.nav-mobile');
-
-    if (mobileMenuBtn && navMobile) {
-        mobileMenuBtn.addEventListener('click', function() {
-            navMobile.classList.toggle('active');
-        });
-    }
 });
 
 // Utility function to show loading state

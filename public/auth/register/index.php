@@ -66,7 +66,7 @@ include __DIR__ . '/../../../views/header.php';
             <a href="/auth/login" class="link">Click here to login</a>
         </p>
     <?php else: ?>
-        <form method="POST" action="/register.php">
+        <form method="POST" action="/auth/register">
             <div class="form-group">
                 <label for="username" class="form-label">Username *</label>
                 <input
@@ -75,7 +75,7 @@ include __DIR__ . '/../../../views/header.php';
                     name="username"
                     class="form-input"
                     required
-                    pattern="[a-z0-9_-]+"
+                    pattern="[a-z0-9_\-]+"
                     minlength="3"
                     maxlength="30"
                     value="<?php echo htmlspecialchars($_POST['username'] ?? ''); ?>"

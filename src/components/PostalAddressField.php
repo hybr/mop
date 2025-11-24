@@ -142,11 +142,11 @@ class PostalAddressField {
         $geocodeButtonId = $opts['id_prefix'] . 'geocode_button';
 
         // Build HTML
-        $html = '<div style="margin-bottom: 1.5rem;">' . "\n";
-        $html .= '    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">' . "\n";
+        $html = '<div class="form-group">' . "\n";
+        $html .= '    <label class="form-label">' . "\n";
         $html .= '        ' . htmlspecialchars($opts['label']);
         if ($opts['required']) {
-            $html .= ' <span style="color: #f44336;">*</span>';
+            $html .= ' <span style="color: var(--danger-color);">*</span>';
         }
         $html .= "\n" . '    </label>' . "\n";
 
@@ -156,7 +156,7 @@ class PostalAddressField {
         $html .= '            type="text"' . "\n";
         $html .= '            id="' . htmlspecialchars($streetAddressId) . '"' . "\n";
         $html .= '            name="' . htmlspecialchars($streetAddressName) . '"' . "\n";
-        $html .= '            style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"' . "\n";
+        $html .= '            class="form-input"' . "\n";
         $html .= '            value="' . htmlspecialchars($opts['street_address_value']) . '"' . "\n";
         $html .= '            placeholder="Street Address"' . "\n";
         if ($opts['required']) {
@@ -165,15 +165,15 @@ class PostalAddressField {
         $html .= '        >' . "\n";
         $html .= '    </div>' . "\n";
 
-        // City, State, Postal Code row
-        $html .= '    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">' . "\n";
+        // City, State, Postal Code row - now using CSS class for responsive grid
+        $html .= '    <div class="address-fields-row">' . "\n";
 
         // City
         $html .= '        <input' . "\n";
         $html .= '            type="text"' . "\n";
         $html .= '            id="' . htmlspecialchars($cityId) . '"' . "\n";
         $html .= '            name="' . htmlspecialchars($cityName) . '"' . "\n";
-        $html .= '            style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"' . "\n";
+        $html .= '            class="form-input address-city"' . "\n";
         $html .= '            value="' . htmlspecialchars($opts['city_value']) . '"' . "\n";
         $html .= '            placeholder="City"' . "\n";
         if ($opts['required']) {
@@ -186,7 +186,7 @@ class PostalAddressField {
         $html .= '            type="text"' . "\n";
         $html .= '            id="' . htmlspecialchars($stateId) . '"' . "\n";
         $html .= '            name="' . htmlspecialchars($stateName) . '"' . "\n";
-        $html .= '            style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"' . "\n";
+        $html .= '            class="form-input address-state"' . "\n";
         $html .= '            value="' . htmlspecialchars($opts['state_value']) . '"' . "\n";
         $html .= '            placeholder="State"' . "\n";
         $html .= '        >' . "\n";
@@ -196,7 +196,7 @@ class PostalAddressField {
         $html .= '            type="text"' . "\n";
         $html .= '            id="' . htmlspecialchars($postalCodeId) . '"' . "\n";
         $html .= '            name="' . htmlspecialchars($postalCodeName) . '"' . "\n";
-        $html .= '            style="padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"' . "\n";
+        $html .= '            class="form-input address-postal"' . "\n";
         $html .= '            value="' . htmlspecialchars($opts['postal_code_value']) . '"' . "\n";
         $html .= '            placeholder="Postal Code"' . "\n";
         $html .= '        >' . "\n";
@@ -208,7 +208,7 @@ class PostalAddressField {
         $html .= '        <select' . "\n";
         $html .= '            id="' . htmlspecialchars($countryId) . '"' . "\n";
         $html .= '            name="' . htmlspecialchars($countryName) . '"' . "\n";
-        $html .= '            style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"' . "\n";
+        $html .= '            class="form-input"' . "\n";
         if ($opts['required']) {
             $html .= '            required' . "\n";
         }
@@ -226,34 +226,34 @@ class PostalAddressField {
         $html .= '    </div>' . "\n";
 
         // Geocoding section
-        $html .= '    <div style="border: 1px solid var(--border-color); border-radius: 4px; padding: 1rem; background-color: #f9f9f9; margin-bottom: 0.75rem;">' . "\n";
-        $html .= '        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">' . "\n";
-        $html .= '            <label style="font-weight: 500; margin: 0;">Geographic Coordinates</label>' . "\n";
+        $html .= '    <div class="geocode-section">' . "\n";
+        $html .= '        <div class="geocode-header">' . "\n";
+        $html .= '            <label class="form-label" style="margin: 0;">Geographic Coordinates</label>' . "\n";
 
         if ($opts['show_geocode_button']) {
             $html .= '            <button' . "\n";
             $html .= '                type="button"' . "\n";
             $html .= '                id="' . htmlspecialchars($geocodeButtonId) . '"' . "\n";
             $html .= '                onclick="geocodeAddress_' . htmlspecialchars($opts['id_prefix']) . '()"' . "\n";
-            $html .= '                style="padding: 0.5rem 1rem; background-color: #2196f3; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.875rem;"' . "\n";
+            $html .= '                class="btn btn-geocode"' . "\n";
             $html .= '            >' . "\n";
-            $html .= '                📍 Update Coordinates from Address' . "\n";
+            $html .= '                📍 <span class="geocode-btn-text">Update Coordinates</span>' . "\n";
             $html .= '            </button>' . "\n";
         }
 
         $html .= '        </div>' . "\n";
 
         // Latitude and Longitude row
-        $html .= '        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">' . "\n";
+        $html .= '        <div class="coordinates-row">' . "\n";
 
         // Latitude
         $html .= '            <div>' . "\n";
-        $html .= '                <label for="' . htmlspecialchars($latitudeId) . '" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem;">Latitude' . ($opts['required'] ? ' <span style="color: #f44336;">*</span>' : '') . '</label>' . "\n";
+        $html .= '                <label for="' . htmlspecialchars($latitudeId) . '" class="form-label text-small">Latitude' . ($opts['required'] ? ' <span style="color: var(--danger-color);">*</span>' : '') . '</label>' . "\n";
         $html .= '                <input' . "\n";
         $html .= '                    type="number"' . "\n";
         $html .= '                    id="' . htmlspecialchars($latitudeId) . '"' . "\n";
         $html .= '                    name="' . htmlspecialchars($latitudeName) . '"' . "\n";
-        $html .= '                    style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"' . "\n";
+        $html .= '                    class="form-input"' . "\n";
         $html .= '                    value="' . htmlspecialchars($opts['latitude_value']) . '"' . "\n";
         $html .= '                    placeholder="e.g., 40.7128"' . "\n";
         $html .= '                    step="any"' . "\n";
@@ -267,12 +267,12 @@ class PostalAddressField {
 
         // Longitude
         $html .= '            <div>' . "\n";
-        $html .= '                <label for="' . htmlspecialchars($longitudeId) . '" style="display: block; margin-bottom: 0.25rem; font-size: 0.875rem;">Longitude' . ($opts['required'] ? ' <span style="color: #f44336;">*</span>' : '') . '</label>' . "\n";
+        $html .= '                <label for="' . htmlspecialchars($longitudeId) . '" class="form-label text-small">Longitude' . ($opts['required'] ? ' <span style="color: var(--danger-color);">*</span>' : '') . '</label>' . "\n";
         $html .= '                <input' . "\n";
         $html .= '                    type="number"' . "\n";
         $html .= '                    id="' . htmlspecialchars($longitudeId) . '"' . "\n";
         $html .= '                    name="' . htmlspecialchars($longitudeName) . '"' . "\n";
-        $html .= '                    style="width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"' . "\n";
+        $html .= '                    class="form-input"' . "\n";
         $html .= '                    value="' . htmlspecialchars($opts['longitude_value']) . '"' . "\n";
         $html .= '                    placeholder="e.g., -74.0060"' . "\n";
         $html .= '                    step="any"' . "\n";

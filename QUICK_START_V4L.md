@@ -12,7 +12,7 @@ The SQLite database will auto-create on first use with the V4L schema.
 No manual setup needed!
 
 ### 3. Register Your First User
-1. Go to: http://localhost:8000/register.php
+1. Go to: http://localhost:8000/auth/register
 2. Create an account with:
    - Username (e.g., `johndoe`)
    - Full Name

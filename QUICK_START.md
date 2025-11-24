@@ -203,7 +203,7 @@ extension=pdo_sqlite
 3. Restart Apache
 
 **For PHP Built-in Server**:
-URLs work automatically (e.g., `/register` instead of `/register.php`)
+URLs work automatically (e.g., `/register` instead of `/auth/register`)
 
 ---
 

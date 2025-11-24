@@ -194,7 +194,7 @@ $entity->setPhone($phone);
 - ✅ Reusable across all forms
 
 #### Files Using This Component
-- ✅ `public/register.php` - User registration phone
+- ✅ `public/auth/register` - User registration phone
 - ✅ `public/organization-form.php` - Organization contact phone
 - ✅ `public/branch-form.php` - Branch phone and contact person phone
 

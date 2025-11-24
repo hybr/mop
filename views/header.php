@@ -38,6 +38,7 @@
                     <a href="/" class="logo">V4L</a>
                 <?php endif; ?>
 
+                <!-- Desktop Navigation -->
                 <nav class="nav">
                     <?php if (isset($auth) && $auth->isLoggedIn()): ?>
                         <?php
@@ -67,8 +68,52 @@
                         <a href="/auth/register/" class="btn btn-primary">Sign Up</a>
                     <?php endif; ?>
                 </nav>
+
+                <!-- Mobile Menu Button -->
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle menu">
+                    <span id="menu-icon">☰</span>
+                </button>
             </div>
         </div>
+
+        <!-- Mobile Navigation (outside container for full width) -->
+        <nav class="nav-mobile" id="nav-mobile">
+            <div class="container">
+                <?php if (isset($auth) && $auth->isLoggedIn()): ?>
+                    <?php
+                    $currentOrg = $auth->getCurrentOrganization();
+                    ?>
+                    <a href="/dashboard/">My Dashboard</a>
+                    <a href="/organizations/" class="org-link" title="Switch Organization">
+                        <?php if ($currentOrg): ?>
+                            <span class="org-name"><?php echo htmlspecialchars($currentOrg->getName()); ?></span>
+                            <?php if ($currentOrg->getSubdomain()): ?>
+                                <span class="org-code">(<?php echo htmlspecialchars($currentOrg->getSubdomain()); ?>)</span>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <span class="org-name">Select Organization</span>
+                        <?php endif; ?>
+                    </a>
+                    <a href="/vacancies.php">Vacancies</a>
+                    <a href="/market/">Market</a>
+                    <a href="/auth/logout/" class="btn btn-primary">Logout</a>
+                <?php else: ?>
+                    <a href="/vacancies.php">Vacancies</a>
+                    <a href="/market/">Market</a>
+                    <a href="/auth/login/">Login</a>
+                    <a href="/auth/register/" class="btn btn-primary">Sign Up</a>
+                <?php endif; ?>
+            </div>
+        </nav>
+
+        <script>
+            function toggleMobileMenu() {
+                var nav = document.getElementById('nav-mobile');
+                var icon = document.getElementById('menu-icon');
+                nav.classList.toggle('active');
+                icon.textContent = nav.classList.contains('active') ? '✕' : '☰';
+            }
+        </script>
     </header>
 
     <main class="container">

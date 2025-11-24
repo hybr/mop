@@ -168,18 +168,17 @@ class PhoneNumberField {
         $phoneNumberId = $opts['id_prefix'] . 'phone_number';
 
         // Build HTML
-        $html = '<div style="margin-bottom: 1.5rem;">' . "\n";
-        $html .= '    <label for="' . htmlspecialchars($phoneNumberId) . '" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">' . "\n";
+        $html = '<div class="form-group">' . "\n";
+        $html .= '    <label for="' . htmlspecialchars($phoneNumberId) . '" class="form-label">' . "\n";
         $html .= '        ' . htmlspecialchars($opts['label']);
         if ($opts['required']) {
-            $html .= ' <span style="color: #f44336;">*</span>';
+            $html .= ' <span style="color: var(--danger-color);">*</span>';
         }
         $html .= "\n" . '    </label>' . "\n";
-        $html .= '    <div style="display: flex; gap: 0.5rem;">' . "\n";
+        $html .= '    <div class="phone-field-wrapper">' . "\n";
         $html .= '        <select' . "\n";
         $html .= '            id="' . htmlspecialchars($countryCodeId) . '"' . "\n";
         $html .= '            name="' . htmlspecialchars($countryCodeName) . '"' . "\n";
-        $html .= '            style="flex: 0 0 180px; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"' . "\n";
         $html .= '        >' . "\n";
 
         foreach (self::$countryCodes as $code => $label) {
@@ -194,7 +193,6 @@ class PhoneNumberField {
         $html .= '            type="tel"' . "\n";
         $html .= '            id="' . htmlspecialchars($phoneNumberId) . '"' . "\n";
         $html .= '            name="' . htmlspecialchars($phoneNumberName) . '"' . "\n";
-        $html .= '            style="flex: 1; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 1rem;"' . "\n";
         $html .= '            value="' . htmlspecialchars($opts['phone_number_value']) . '"' . "\n";
         $html .= '            placeholder="' . htmlspecialchars($opts['placeholder']) . '"' . "\n";
         $html .= '            pattern="[0-9]+"' . "\n";

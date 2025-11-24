@@ -21,7 +21,10 @@
       "Bash(bash:*)",
       "Bash(find:*)",
       "Bash(curl:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(setup_db.bat)",
+      "Bash(cmd //c setup_db.bat)",
+      "Bash(./setup_db.bat)"
     ],
     "deny": [],
     "ask": []
