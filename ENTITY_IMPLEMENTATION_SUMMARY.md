@@ -64,6 +64,9 @@ Per `permissions.md`:
 - ✅ Full CRUD permissions for organizations they created
 - ✅ Ownership verified on all update/delete operations
 
+### 4. CRUD ✅
+Implement CRUD pages
+
 ---
 
 ## 🎨 UX Implementation
@@ -285,33 +288,33 @@ $org->getPublicFields(); // Returns only public data
 
 ## 📊 Data Flow
 
-### Creating an Organization
+### iMPLEMENT CRUD
 ```
-User fills form → Validation → Check subdomain uniqueness
+User fills form → Validation → Check 
 → Create record with created_by = user_id
-→ Toast: "Organization created successfully!"
-→ Redirect to /organizations.php
+→ Toast: "<Entity> Created successfully!"
+→ Redirect to entity list page
 ```
 
 ### Viewing an Organization (Public)
 ```
-Guest/User visits /organization-view.php?id=X
-→ findByIdPublic($id)
-→ Returns only public fields
+Guest/User visits <entity_path>-view.php?id=X
+→ findById($id)
+→ Returns only label fields
 → Shows details page
 → Shows "Edit" button if creator or Super Admin
 ```
 
-### Editing an Organization
+### Editing an Entity
 ```
 User clicks Edit → Check canEdit(id, userId, userEmail)
 → If creator OR Super Admin: Allow
 → Otherwise: Access denied
 → Update with updated_by = user_id
-→ Toast: "Organization updated!"
+→ Toast: "<Entity> updated!"
 ```
 
-### Deleting an Organization
+### Deleting an Entity
 ```
 Soft Delete:
 → Set deleted_by = user_id, deleted_at = now()
@@ -320,7 +323,7 @@ Soft Delete:
 
 Permanent Delete:
 → Hard delete from database
-→ Toast: "Organization permanently deleted"
+→ Toast: "<Entity> permanently deleted"
 ```
 
 ---

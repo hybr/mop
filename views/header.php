@@ -58,11 +58,11 @@
                                 <span class="org-arrow">▼</span>
                             </a>
                         </div>
-                        <a href="/vacancies.php">Vacancies</a>
+                        <a href="/vacancies">Vacancies</a>
                         <a href="/market/">Market</a>
                         <a href="/auth/logout/" class="btn btn-primary">Logout</a>
                     <?php else: ?>
-                        <a href="/vacancies.php">Vacancies</a>
+                        <a href="/vacancies">Vacancies</a>
                         <a href="/market/">Market</a>
                         <a href="/auth/login/">Login</a>
                         <a href="/auth/register/" class="btn btn-primary">Sign Up</a>
@@ -94,11 +94,11 @@
                             <span class="org-name">Select Organization</span>
                         <?php endif; ?>
                     </a>
-                    <a href="/vacancies.php">Vacancies</a>
+                    <a href="/vacancies">Vacancies</a>
                     <a href="/market/">Market</a>
                     <a href="/auth/logout/" class="btn btn-primary">Logout</a>
                 <?php else: ?>
-                    <a href="/vacancies.php">Vacancies</a>
+                    <a href="/vacancies">Vacancies</a>
                     <a href="/market/">Market</a>
                     <a href="/auth/login/">Login</a>
                     <a href="/auth/register/" class="btn btn-primary">Sign Up</a>

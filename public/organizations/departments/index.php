@@ -54,9 +54,9 @@ include __DIR__ . '/../../../views/header.php';
             <a href="/organizations/departments/human_resource/positions/" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
                 Positions
             </a>
-            <button class="btn btn-secondary" style="padding: 1rem; opacity: 0.6;" disabled title="Coming soon">
+            <a href="/organizations/departments/human_resource/vacancies/" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
                 Vacancy
-            </button>
+            </a>
             <button class="btn btn-secondary" style="padding: 1rem; opacity: 0.6;" disabled title="Coming soon">
                 Hiring
             </button>
