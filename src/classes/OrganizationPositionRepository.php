@@ -24,9 +24,7 @@ class OrganizationPositionRepository {
      */
     public function create(OrganizationPosition $position, $userId, $userEmail) {
         // Only Super Admin can create positions (since they're global)
-        if (!$this->isSuperAdmin($userEmail)) {
-            throw new \Exception("Only Super Admin can create positions");
-        }
+        Authorization::requireSuperAdmin($userEmail, 'create positions');
 
         // Check code uniqueness
         if ($this->codeExists($position->getCode())) {
@@ -223,9 +221,7 @@ class OrganizationPositionRepository {
         }
 
         // Check if user can edit (Super Admin only)
-        if (!$this->canEdit($userEmail)) {
-            throw new \Exception("Only Super Admin can edit positions");
-        }
+        Authorization::requireSuperAdmin($userEmail, 'edit positions');
 
         // Check code uniqueness (excluding current position)
         if ($this->codeExists($position->getCode(), $position->getId())) {
@@ -281,9 +277,7 @@ class OrganizationPositionRepository {
      * Soft delete position
      */
     public function softDelete($id, $userId, $userEmail) {
-        if (!$this->canEdit($userEmail)) {
-            throw new \Exception("Only Super Admin can delete positions");
-        }
+        Authorization::requireSuperAdmin($userEmail, 'delete positions');
 
         $existing = $this->findById($id);
         if (!$existing) {
@@ -302,9 +296,7 @@ class OrganizationPositionRepository {
      * Restore soft-deleted position
      */
     public function restore($id, $userEmail) {
-        if (!$this->isSuperAdmin($userEmail)) {
-            throw new \Exception("Only Super Admin can restore positions");
-        }
+        Authorization::requireSuperAdmin($userEmail, 'restore positions');
 
         $pdo = $this->db->getPdo();
         $stmt = $pdo->prepare("UPDATE {$this->tableName}
@@ -318,7 +310,7 @@ class OrganizationPositionRepository {
      * Get deleted positions (for trash/restore)
      */
     public function findDeleted($userEmail, $limit = 100) {
-        if (!$this->isSuperAdmin($userEmail)) {
+        if (!Authorization::isSuperAdmin($userEmail)) {
             return [];
         }
 
@@ -409,16 +401,17 @@ class OrganizationPositionRepository {
 
     /**
      * Check if user is Super Admin
+     * @deprecated Use Authorization::isSuperAdmin() instead
      */
     public function isSuperAdmin($email) {
-        return $email === 'sharma.yogesh.1234@gmail.com';
+        return Authorization::isSuperAdmin($email);
     }
 
     /**
      * Check if user can edit position (Super Admin only since positions are global)
      */
     public function canEdit($userEmail) {
-        return $this->isSuperAdmin($userEmail);
+        return Authorization::canEditGlobalEntities($userEmail);
     }
 
     /**

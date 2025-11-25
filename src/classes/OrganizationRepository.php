@@ -498,7 +498,7 @@ class OrganizationRepository {
      * Per permissions.md: sharma.yogesh.1234@gmail.com is the Super Admin
      */
     public function isSuperAdmin($email) {
-        return $email === 'sharma.yogesh.1234@gmail.com';
+        return Authorization::isSuperAdmin($email);
     }
 
     /**

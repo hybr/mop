@@ -480,10 +480,10 @@ class OrganizationDepartmentRepository {
 
     /**
      * Check if user is Super Admin
-     * Per permissions.md: sharma.yogesh.1234@gmail.com is the Super Admin
+     * @deprecated Use Authorization::isSuperAdmin() instead
      */
     public function isSuperAdmin($email) {
-        return $email === 'sharma.yogesh.1234@gmail.com';
+        return Authorization::isSuperAdmin($email);
     }
 
     /**
@@ -491,7 +491,7 @@ class OrganizationDepartmentRepository {
      * Per permissions.md: Only Super Admin can edit
      */
     public function canEdit($userEmail) {
-        return $this->isSuperAdmin($userEmail);
+        return Authorization::canEditGlobalEntities($userEmail);
     }
 
     /**
@@ -499,6 +499,6 @@ class OrganizationDepartmentRepository {
      * Per permissions.md: Only Super Admin can delete
      */
     public function canDelete($userEmail) {
-        return $this->isSuperAdmin($userEmail);
+        return Authorization::canDeleteGlobalEntities($userEmail);
     }
 }

@@ -310,9 +310,10 @@ class OrganizationBranchRepository {
 
     /**
      * Check if user is Super Admin
+     * @deprecated Use Authorization::isSuperAdmin() instead
      */
     public function isSuperAdmin($email) {
-        return $email === 'sharma.yogesh.1234@gmail.com';
+        return Authorization::isSuperAdmin($email);
     }
 
     /**

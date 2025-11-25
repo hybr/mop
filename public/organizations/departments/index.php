@@ -40,31 +40,14 @@ include __DIR__ . '/../../../views/header.php';
         </div>
     <?php endif; ?>
 
-    <!-- Facilities Management Quick Access -->
-    <div class="card" style="margin-bottom: 2rem;">
-        <h2 class="card-title">Facilities Management</h2>
-        <p class="text-muted" style="margin-bottom: 1rem;">Quick access to facility management sections</p>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-            <a href="/organizations/departments/facilities/teams/" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
-                Teams
-            </a>
-            <a href="/organizations/departments/facilities/branches/" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
-                Branches
-            </a>
-            <a href="/organizations/departments/facilities/branches/buildings" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
-                Buildings
-            </a>
-            <a href="/organizations/departments/facilities/branches/buildings/workstations" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
-                Workstations
-            </a>
-        </div>
-    </div>
-
     <!-- Human Resource Quick Access -->
     <div class="card" style="margin-bottom: 2rem;">
         <h2 class="card-title">Human Resource</h2>
         <p class="text-muted" style="margin-bottom: 1rem;">Quick access to human resource management sections</p>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <a href="/organizations/departments/human_resource/teams/" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
+                Teams
+            </a>
             <a href="/organizations/departments/human_resource/designations/" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
                 Designations
             </a>
@@ -86,6 +69,23 @@ include __DIR__ . '/../../../views/header.php';
             <button class="btn btn-secondary" style="padding: 1rem; opacity: 0.6;" disabled title="Coming soon">
                 Leave Management
             </button>
+        </div>
+    </div>
+
+    <!-- Facilities Management Quick Access -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <h2 class="card-title">Facilities Management</h2>
+        <p class="text-muted" style="margin-bottom: 1rem;">Quick access to facility management sections</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <a href="/organizations/departments/facilities/branches/" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
+                Branches
+            </a>
+            <a href="/organizations/departments/facilities/branches/buildings" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
+                Buildings
+            </a>
+            <a href="/organizations/departments/facilities/branches/buildings/workstations" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
+                Workstations
+            </a>
         </div>
     </div>
 

@@ -345,16 +345,17 @@ class OrganizationDesignationRepository {
 
     /**
      * Check if user is Super Admin
+     * @deprecated Use Authorization::isSuperAdmin() instead
      */
     public function isSuperAdmin($email) {
-        return $email === 'sharma.yogesh.1234@gmail.com';
+        return Authorization::isSuperAdmin($email);
     }
 
     /**
      * Check if user can edit designation (Super Admin only)
      */
     public function canEdit($userEmail) {
-        return $this->isSuperAdmin($userEmail);
+        return Authorization::canEditGlobalEntities($userEmail);
     }
 
     /**

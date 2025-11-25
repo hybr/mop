@@ -6,7 +6,7 @@ use App\Config\Database;
 
 class OrganizationDepartmentTeamRepository {
     private $db;
-    private $tableName = 'organization_department_teams';
+    private $tableName = 'department_teams';
 
     public function __construct() {
         $this->db = Database::getInstance();
@@ -531,7 +531,7 @@ class OrganizationDepartmentTeamRepository {
      * Per permissions.md: sharma.yogesh.1234@gmail.com is the Super Admin
      */
     public function isSuperAdmin($email) {
-        return $email === 'sharma.yogesh.1234@gmail.com';
+        return Authorization::isSuperAdmin($email);
     }
 
     /**
@@ -539,7 +539,7 @@ class OrganizationDepartmentTeamRepository {
      * Per permissions.md: Only Super Admin can edit
      */
     public function canEdit($userEmail) {
-        return $this->isSuperAdmin($userEmail);
+        return Authorization::canEditGlobalEntities($userEmail);
     }
 
     /**
@@ -547,6 +547,26 @@ class OrganizationDepartmentTeamRepository {
      * Per permissions.md: Only Super Admin can delete
      */
     public function canDelete($userEmail) {
-        return $this->isSuperAdmin($userEmail);
+        return Authorization::canDeleteGlobalEntities($userEmail);
+    }
+
+    /**
+     * Get all teams with department information (for display)
+     */
+    public function findAllWithDepartments($limit = 1000, $offset = 0) {
+        if ($this->db->getDriver() === 'sqlite') {
+            $pdo = $this->db->getPdo();
+            $stmt = $pdo->prepare("
+                SELECT t.*, d.name as department_name, d.code as department_code
+                FROM {$this->tableName} t
+                LEFT JOIN organization_departments d ON t.organization_department_id = d.id
+                WHERE t.deleted_at IS NULL
+                ORDER BY t.sort_order ASC, t.name ASC
+                LIMIT ? OFFSET ?
+            ");
+            $stmt->execute([$limit, $offset]);
+            return $stmt->fetchAll();
+        }
+        return [];
     }
 }
