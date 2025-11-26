@@ -6,6 +6,7 @@ use App\Classes\OrganizationVacancyRepository;
 use App\Classes\OrganizationVacancy;
 use App\Classes\OrganizationPositionRepository;
 use App\Classes\OrganizationRepository;
+use App\Classes\WorkflowInstanceRepository;
 
 $auth = new Auth();
 $auth->requireAuth();
@@ -52,6 +53,17 @@ $position = $vacancy->getOrganizationPositionId() ? $positionRepo->findById($vac
 $organization = $vacancy->getOrganizationId() ? $orgRepo->findById($vacancy->getOrganizationId(), $user->getId()) : null;
 
 $daysUntil = $vacancy->getDaysUntilDeadline();
+
+// Check if hiring workflow already exists
+$instanceRepo = new WorkflowInstanceRepository();
+$existingInstances = $instanceRepo->findByEntity('OrganizationVacancy', $vacancy->getId());
+$activeWorkflow = null;
+foreach ($existingInstances as $inst) {
+    if ($inst->getStatus() === 'active') {
+        $activeWorkflow = $inst;
+        break;
+    }
+}
 
 $pageTitle = $vacancy->getTitle() . ' - Vacancy Details';
 include __DIR__ . '/../../../../../../views/header.php';
@@ -114,6 +126,61 @@ include __DIR__ . '/../../../../../../views/header.php';
             </div>
         <?php endif; ?>
     </div>
+
+    <!-- Hiring Workflow Section -->
+    <?php if ($vacancy->getIsPublished()): ?>
+        <div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <h2 style="margin: 0 0 1rem 0; color: white;">Hiring Workflow</h2>
+
+            <?php if ($activeWorkflow): ?>
+                <!-- Active Workflow -->
+                <p style="margin: 0 0 1rem 0; opacity: 0.9;">
+                    A hiring workflow is currently active for this vacancy.
+                </p>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <a href="/organizations/departments/human_resource/hiring/instances/view/?id=<?php echo $activeWorkflow->getId(); ?>"
+                       class="btn"
+                       style="background: white; color: #667eea; border: none;">
+                        View Workflow Progress
+                    </a>
+                    <a href="/tasks/"
+                       class="btn"
+                       style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5);">
+                        View My Tasks
+                    </a>
+                </div>
+            <?php else: ?>
+                <!-- Start Workflow -->
+                <p style="margin: 0 0 1rem 0; opacity: 0.9;">
+                    Start the automated hiring process to manage candidates from application to onboarding.
+                </p>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                    <a href="/workflows/start/?entity_type=OrganizationVacancy&entity_id=<?php echo $vacancy->getId(); ?>"
+                       class="btn"
+                       style="background: white; color: #667eea; border: none; font-weight: bold;"
+                       onclick="return confirm('Start hiring workflow for this vacancy?\n\nThis will:\n- Create workflow instance\n- Assign tasks to HR team\n- Begin automated hiring process');">
+                        🚀 Start Hiring Workflow
+                    </a>
+                    <a href="/organizations/departments/human_resource/hiring/"
+                       class="btn"
+                       style="background: transparent; color: white; border: 1px solid rgba(255,255,255,0.5);">
+                        Learn More
+                    </a>
+                </div>
+                <p style="margin: 1rem 0 0 0; opacity: 0.8; font-size: 0.875rem;">
+                    💡 The workflow includes: Post Vacancy → Review Applications → Screen → Interview → Offer → Onboard
+                </p>
+            <?php endif; ?>
+        </div>
+    <?php else: ?>
+        <div class="card" style="margin-bottom: 2rem; background: #f59e0b; color: white;">
+            <p style="margin: 0;">
+                ⚠️ <strong>Vacancy must be published</strong> before you can start the hiring workflow.
+                <a href="/organizations/departments/human_resource/vacancies/form/?id=<?php echo $vacancy->getId(); ?>"
+                   style="color: white; text-decoration: underline; margin-left: 0.5rem;">Publish now</a>
+            </p>
+        </div>
+    <?php endif; ?>
 
     <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
         <!-- Left Column: Main Content -->

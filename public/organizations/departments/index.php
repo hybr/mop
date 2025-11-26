@@ -57,9 +57,9 @@ include __DIR__ . '/../../../views/header.php';
             <a href="/organizations/departments/human_resource/vacancies/" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
                 Vacancy
             </a>
-            <button class="btn btn-secondary" style="padding: 1rem; opacity: 0.6;" disabled title="Coming soon">
+            <a href="/organizations/departments/human_resource/hiring/" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
                 Hiring
-            </button>
+            </a>
             <button class="btn btn-secondary" style="padding: 1rem; opacity: 0.6;" disabled title="Coming soon">
                 Employees
             </button>
@@ -86,6 +86,26 @@ include __DIR__ . '/../../../views/header.php';
             <a href="/organizations/departments/facilities/branches/buildings/workstations" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
                 Workstations
             </a>
+        </div>
+    </div>
+
+    <!-- Information Technology Quick Access -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <h2 class="card-title">Information Technology</h2>
+        <p class="text-muted" style="margin-bottom: 1rem;">Quick access to IT and security management sections</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <a href="/organizations/departments/information_technology/entity_permissions/" class="btn btn-secondary" style="padding: 1rem; text-align: center;">
+                Manage Permissions
+            </a>
+            <button class="btn btn-secondary" style="padding: 1rem; opacity: 0.6;" disabled title="Coming soon">
+                User Roles
+            </button>
+            <button class="btn btn-secondary" style="padding: 1rem; opacity: 0.6;" disabled title="Coming soon">
+                Access Control
+            </button>
+            <button class="btn btn-secondary" style="padding: 1rem; opacity: 0.6;" disabled title="Coming soon">
+                Audit Logs
+            </button>
         </div>
     </div>
 

@@ -487,4 +487,11 @@ class OrganizationEntityPermissionRepository {
 
         return $copied;
     }
+
+    /**
+     * Check if user is Super Admin
+     */
+    public function isSuperAdmin($email) {
+        return Authorization::isSuperAdmin($email);
+    }
 }

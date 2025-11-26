@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../../src/includes/autoload.php';
 
 use App\Classes\Auth;
+use App\Classes\WorkflowTaskRepository;
 
 $auth = new Auth();
 $auth->requireAuth();
@@ -11,6 +12,13 @@ $auth->autoSelectOrganization();
 
 $user = $auth->getCurrentUser();
 $currentOrg = $auth->getCurrentOrganization();
+
+// Get user's task counts
+$taskRepo = new WorkflowTaskRepository();
+$pendingTasksCount = $taskRepo->countByUser($user->getId(), 'pending');
+$inProgressTasksCount = $taskRepo->countByUser($user->getId(), 'in_progress');
+$totalActiveTasks = $pendingTasksCount + $inProgressTasksCount;
+
 $pageTitle = 'Dashboard';
 include __DIR__ . '/../../views/header.php';
 ?>
@@ -78,10 +86,37 @@ include __DIR__ . '/../../views/header.php';
         </div>
     </div>
 
+    <!-- Workflow Tasks Summary -->
+    <?php if ($totalActiveTasks > 0): ?>
+        <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <h3 style="margin: 0 0 0.5rem 0; color: white;">Your Workflow Tasks</h3>
+            <p style="margin: 0 0 1rem 0; opacity: 0.9;">
+                You have <strong><?php echo $totalActiveTasks; ?></strong> active workflow task<?php echo $totalActiveTasks > 1 ? 's' : ''; ?>
+                (<?php echo $pendingTasksCount; ?> pending, <?php echo $inProgressTasksCount; ?> in progress)
+            </p>
+            <a href="/tasks/"
+               class="btn"
+               style="background: white; color: #667eea; border: none; font-weight: bold;">
+                View My Tasks →
+            </a>
+        </div>
+    <?php endif; ?>
+
     <div class="card">
         <h3 class="card-title">Quick Actions</h3>
         <div style="display: flex; flex-wrap: wrap; gap: 1rem;">
-            <a href="/profile.php" class="btn btn-primary">Update Profile</a>
+            <a href="/tasks/" class="btn btn-primary" style="position: relative;">
+                View Tasks
+                <?php if ($totalActiveTasks > 0): ?>
+                    <span style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold;">
+                        <?php echo $totalActiveTasks; ?>
+                    </span>
+                <?php endif; ?>
+            </a>
+            <a href="/organizations/departments/" class="btn btn-secondary">Departments</a>
+            <a href="/organizations/departments/human_resource/vacancies/" class="btn btn-secondary">Vacancies</a>
+            <a href="/organizations/departments/human_resource/hiring/instances/" class="btn btn-secondary">Hiring Workflows</a>
+            <a href="/profile.php" class="btn btn-secondary">Update Profile</a>
             <?php if ($auth->hasRole('admin')): ?>
                 <a href="/admin/users.php" class="btn btn-secondary">Manage Users</a>
             <?php endif; ?>
