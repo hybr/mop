@@ -272,7 +272,7 @@ class WorkflowInstanceRepository {
             $stmt = $pdo->prepare("
                 SELECT
                     wel.*,
-                    u.name as user_name,
+                    u.full_name as user_name,
                     u.email as user_email
                 FROM workflow_execution_log wel
                 LEFT JOIN users u ON wel.user_id = u.id

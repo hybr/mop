@@ -24,7 +24,8 @@
       "Bash(findstr:*)",
       "Bash(setup_db.bat)",
       "Bash(cmd //c setup_db.bat)",
-      "Bash(./setup_db.bat)"
+      "Bash(./setup_db.bat)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

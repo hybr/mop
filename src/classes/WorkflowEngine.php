@@ -220,7 +220,7 @@ class WorkflowEngine {
             // For now, return all active users
             // TODO: Implement proper position-based user lookup
             $stmt = $pdo->prepare("
-                SELECT DISTINCT u.id, u.name, u.email
+                SELECT DISTINCT u.id, u.full_name as name, u.email
                 FROM users u
                 WHERE u.is_active = 1
                 LIMIT 10

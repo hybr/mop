@@ -215,6 +215,9 @@ class OrganizationVacancy {
             'benefits' => $this->benefits,
             'application_method' => $this->application_method,
             'application_url' => $this->application_url,
+            'contact_person' => $this->contact_person,
+            'contact_email' => $this->contact_email,
+            'contact_phone' => $this->contact_phone,
             'status' => $this->status,
             'is_published' => $this->is_published,
             'published_at' => $this->published_at
@@ -229,7 +232,8 @@ class OrganizationVacancy {
             'id', 'title', 'code', 'description', 'organization_id', 'organization_position_id',
             'vacancy_type', 'priority', 'openings_count', 'posted_date', 'application_deadline',
             'target_start_date', 'salary_offered_min', 'salary_offered_max', 'salary_currency',
-            'benefits', 'application_method', 'application_url', 'status', 'is_published', 'published_at'
+            'benefits', 'application_method', 'application_url', 'contact_person', 'contact_email',
+            'contact_phone', 'status', 'is_published', 'published_at'
         ];
         return in_array($fieldName, $publicFields);
     }

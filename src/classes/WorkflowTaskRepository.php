@@ -116,7 +116,7 @@ class WorkflowTaskRepository {
             $sql = "
                 SELECT
                     wt.*,
-                    u.name as assigned_to_name,
+                    u.full_name as assigned_to_name,
                     u.email as assigned_to_email
                 FROM {$this->tableName} wt
                 LEFT JOIN users u ON wt.assigned_to_user_id = u.id
